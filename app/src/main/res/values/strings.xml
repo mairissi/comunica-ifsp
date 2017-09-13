@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ComunicaIFSP</string>
+    <string name="email">Email</string>
+    <string name="senha">Senha</string>
+    <string name="conectar">Conectar</string>
+    <string name="nome">Nome</string>
+    <string name="ra">R.A.</string>
+    <string name="cpf">CPF</string>
+    <string name="sem_cadastro">Não possui cadastro? Cadastre-se</string>
+    <string name="login_sucesso">Parabéns você conseguiu se cadastrar e fazer login com sucesso!</string>
+    <string name="sair">Sair</string>
+</resources>

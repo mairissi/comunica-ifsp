@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "335686673183",
+    "firebase_url": "https://comunica-ifsp.firebaseio.com",
+    "project_id": "comunica-ifsp",
+    "storage_bucket": "comunica-ifsp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335686673183:android:fee63997c438ad7f",
+        "android_client_info": {
+          "package_name": "br.edu.ifspsaocarlos.comunicaifsp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335686673183-77pbr13vcbv0ofn9fk9u2oavss324k0m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.edu.ifspsaocarlos.comunicaifsp",
+            "certificate_hash": "8de130a1a3ce91ed0479d820d7d9c5a8e86b1464"
+          }
+        },
+        {
+          "client_id": "335686673183-md2shlus08pir6uha6k95btrn9lt121b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpkKXCzdnWY5l8UM-UvlrEadAxV1Ndc18"
+        },
+        {
+          "current_key": "AIzaSyAniOalmLbKMUsJ6EIS-Gb-11wm2BAFM4M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "335686673183-md2shlus08pir6uha6k95btrn9lt121b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
