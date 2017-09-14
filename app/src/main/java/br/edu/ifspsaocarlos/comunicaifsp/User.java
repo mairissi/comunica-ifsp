@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class User {
 
-    private BigDecimal idUser;
+    private String idUser;
     private String name;
     private String cpf;
     private String ra;
@@ -21,11 +21,11 @@ public class User {
 
     public User() {}
 
-    public BigDecimal getIdUser() {
+    public String getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(BigDecimal idUser) {
+    public void setIdUser(String idUser) {
         this.idUser = idUser;
     }
 

@@ -42,11 +42,8 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         authStateListener = getFirebaseAuthResultHandler();
 
         initViews();
-//
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Login");
 
         btnLogin = (Button) findViewById(R.id.btn_Login);
@@ -81,13 +78,11 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
             if (emailString.isEmpty()) {
                 email.setError("E-mail não informado!");
-
                 ok = false;
             }
 
             if (passwordString.isEmpty()) {
                 password.setError("Por favor digite uma senha!");
-
                 ok = false;
             }
 
@@ -98,7 +93,8 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
                 openProgressBar();
                 verifyLogin();
-            } else {
+            }
+            else {
                 closeProgressBar();
             }
         }
@@ -114,7 +110,8 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
         if (firebaseAuth.getCurrentUser() != null) {
             callMainActivity();
-        } else {
+        }
+        else {
             firebaseAuth.addAuthStateListener(authStateListener);
         }
     }
@@ -140,7 +137,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
                 if (user.getIdUser() == null && isNameOk(user, userFirebase)) {
 
-                    user.setIdUser(new BigDecimal(userFirebase.getUid()));
+                    user.setIdUser(userFirebase.getUid());
                     user.setNameIfNull(userFirebase.getDisplayName());
                     user.setEmailIfNull(userFirebase.getEmail());
                     user.saveDB();
@@ -165,6 +162,8 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
                             btnLogin.setEnabled(true);
                             register.setEnabled(true);
+
+                            showToast("Login inválido!");
 
                             return;
                         }

@@ -44,11 +44,13 @@ public class CadastroActivity extends CommonActivity
         setContentView(R.layout.activity_cadastro);
         FabCadastrar = (FloatingActionButton) findViewById(R.id.fab_enviarDados_Cadastro);
 
+        initViews();
+
         //Mask CPF
         cpf.addTextChangedListener(Mask.insert("###.###.###-##", cpf));
 
         //Mask R.A.
-        cpf.addTextChangedListener(Mask.insert("######-#", cpf));
+        ra.addTextChangedListener(Mask.insert("######-#", ra));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Cadastro");
@@ -64,12 +66,10 @@ public class CadastroActivity extends CommonActivity
                     return;
                 }
 
-                user.setIdUser( new BigDecimal(firebaseUser.getUid()));
+                user.setIdUser(firebaseUser.getUid());
                 user.saveDB(CadastroActivity.this);
             }
         };
-
-        initViews();
 
         FabCadastrar.setOnClickListener(this);
     }
@@ -110,35 +110,67 @@ public class CadastroActivity extends CommonActivity
     public void onClick(View v) {
         initUser();
 
-        Validator.validateNotNull(name,"Preencha o campo Nome");
-        Validator.validateNotNull(cpf,"Preencha o campo CPF");
-        Validator.validateNotNull(ra, "Preencha o campo RA");
-        Validator.validateNotNull(email, "Preencha o campo Email");
-        Validator.validateNotNull(password, "Preencha o campo Senha");
+        Boolean noError = true;
 
-        boolean validCPF = Validator.validateCPF(cpf.getText().toString());
+        if(name.getText().toString().isEmpty()){
+            name.setError("Nome não informado!");
+            noError = false;
+        }
 
-        if(!validCPF){
+        if(cpf.getText().toString().isEmpty()){
+            cpf.setError("CPF não informado!");
+            noError = false;
+        }
+
+        if(ra.getText().toString().isEmpty()){
+            ra.setError("RA não informado!");
+            noError = false;
+        }
+
+        if(email.getText().toString().isEmpty()){
+            email.setError("E-mail não informado!");
+            noError = false;
+        }
+
+        if(password.getText().toString().isEmpty()){
+            password.setError("Por favor digite uma senha!");
+            noError = false;
+        }
+
+        if(noError){
+            noError = verifyCPFAndEmail();
+            if(noError) {
+                FabCadastrar.setEnabled(false);
+                progressBar.setFocusable(true);
+
+                openProgressBar();
+                saveUsuario();
+            }
+            else {
+                closeProgressBar();
+            }
+        }
+        else{
+            closeProgressBar();
+        }
+    }
+
+    private boolean verifyCPFAndEmail (){
+        Boolean noError = Validator.validateCPF(cpf.getText().toString());
+
+        if (!noError) {
             closeProgressBar();
             cpf.setError("CPF inválido");
-            cpf.setFocusable(true);
-            cpf.requestFocus();
         }
 
-        boolean validEmail = Validator.validateEmail(email.getText().toString());
+        noError = Validator.validateEmail(email.getText().toString());
 
-        if(!validEmail){
+        if (!noError) {
             closeProgressBar();
             email.setError("Email inválido");
-            email.setFocusable(true);
-            email.requestFocus();
         }
 
-        FabCadastrar.setEnabled(false);
-        progressBar.setFocusable(true);
-
-        openProgressBar();
-        saveUsuario();
+        return noError;
     }
 
     private void saveUsuario() {
@@ -167,7 +199,7 @@ public class CadastroActivity extends CommonActivity
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         mAuth.signOut();
 
-        showToast("Conta criada com sucesso!");
+        showSnackbar("Conta criada com sucesso!");
         closeProgressBar();
         finish();
     }

@@ -110,4 +110,5 @@ public class Validator {
             return android.util.Patterns.EMAIL_ADDRESS.matcher(txtEmail).matches();
         }
     }
+
 }
