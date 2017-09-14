@@ -30,7 +30,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     private FirebaseAuth.AuthStateListener authStateListener;
     private User user;
 
-    private TextView cadastrar;
+    private TextView register;
     private Button btnLogin;
 
     @Override
@@ -42,9 +42,9 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         authStateListener = getFirebaseAuthResultHandler();
 
         initViews();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Login");
@@ -57,7 +57,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         email = (AutoCompleteTextView) findViewById(R.id.edt_Email_Login);
         password = (EditText) findViewById(R.id.edt_Senha_Login);
         progressBar = (ProgressBar) findViewById(R.id.login_progress);
-        cadastrar = (TextView) findViewById(R.id.txt_Cadastrar);
+        register = (TextView) findViewById(R.id.txt_Register);
     }
 
     protected void initUser() {
@@ -74,18 +74,18 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         int id = v.getId();
         if (id == R.id.btn_Login) {
 
-            String EMAIL = email.getText().toString();
-            String SENHA = password.getText().toString();
+            String emailString = email.getText().toString();
+            String passwordString = password.getText().toString();
 
             boolean ok = true;
 
-            if (EMAIL.isEmpty()) {
+            if (emailString.isEmpty()) {
                 email.setError("E-mail não informado!");
 
                 ok = false;
             }
 
-            if (SENHA.isEmpty()) {
+            if (passwordString.isEmpty()) {
                 password.setError("Por favor digite uma senha!");
 
                 ok = false;
@@ -93,7 +93,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
             if (ok) {
                 btnLogin.setEnabled(false);
-                cadastrar.setEnabled(false);
+                register.setEnabled(false);
                 progressBar.setFocusable(true);
 
                 openProgressBar();
@@ -113,7 +113,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     private void verifyLogged() {
 
         if (firebaseAuth.getCurrentUser() != null) {
-            chamarMainActivity();
+            callMainActivity();
         } else {
             firebaseAuth.addAuthStateListener(authStateListener);
         }
@@ -146,7 +146,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
                     user.saveDB();
                 }
 
-                chamarMainActivity();
+                callMainActivity();
             }
         };
         return (callback);
@@ -164,7 +164,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
                             closeProgressBar();
 
                             btnLogin.setEnabled(true);
-                            cadastrar.setEnabled(true);
+                            register.setEnabled(true);
 
                             return;
                         }
@@ -181,13 +181,13 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         return (user.getName() != null || firebaseUser.getDisplayName() != null);
     }
 
-    private void chamarMainActivity() {
+    private void callMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public void chamarCadastro(View view) {
+    public void callRegister(View view) {
         Intent intent = new Intent(this, CadastroActivity.class);
         startActivity(intent);
     }
