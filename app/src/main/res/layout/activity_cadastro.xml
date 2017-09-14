@@ -114,14 +114,17 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/fab_enviarDados_Cadastro"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_margin="@android:dimen/app_icon_size"
-                    android:src="@drawable/ic_action_salvar" />
+                    android:layout_weight="0.03"
+                    android:src="@drawable/ic_action_salvar"
+                    app:backgroundTint="@android:color/holo_red_dark" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

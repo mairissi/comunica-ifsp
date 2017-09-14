@@ -11,7 +11,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#1c7b13"
         android:fillViewport="false">
 
         <LinearLayout
@@ -35,36 +34,29 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColorHint="#FFFFFF">
+                    android:layout_height="wrap_content" >
 
-                    <AutoCompleteTextView
+                    <EditText
                         android:id="@+id/edt_Email_Login"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/email"
                         android:imeOptions="actionNext"
-                        android:inputType="textEmailAddress"
-                        android:textColor="#FFFFFF"
-                        android:textColorHint="#FFFFFF"
-                        android:textColorLink="#FFFFFF" />
+                        android:inputType="textEmailAddress" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColorHint="#FFFFFF">
+                    android:layout_marginTop="5dp" >
 
                     <EditText
                         android:id="@+id/edt_Senha_Login"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#FFFFFF"
                         android:hint="@string/senha"
                         android:imeOptions="actionDone"
-                        android:inputType="textPassword"
-                        android:textColorHint="#FFFFFF" />
+                        android:inputType="textPassword" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
@@ -97,8 +89,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
                     android:onClick="callRegister"
-                    android:text="@string/sem_cadastro"
-                    android:textColor="#ffffff" />
+                    android:text="@string/sem_cadastro" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

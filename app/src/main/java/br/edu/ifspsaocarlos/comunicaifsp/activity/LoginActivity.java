@@ -3,9 +3,7 @@ package br.edu.ifspsaocarlos.comunicaifsp.activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -14,11 +12,12 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.math.BigDecimal;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
@@ -51,7 +50,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     }
 
     protected void initViews() {
-        email = (AutoCompleteTextView) findViewById(R.id.edt_Email_Login);
+        email = (EditText) findViewById(R.id.edt_Email_Login);
         password = (EditText) findViewById(R.id.edt_Senha_Login);
         progressBar = (ProgressBar) findViewById(R.id.login_progress);
         register = (TextView) findViewById(R.id.txt_Register);
@@ -78,11 +77,13 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
             if (emailString.isEmpty()) {
                 email.setError("E-mail não informado!");
+                email.requestFocus();
                 ok = false;
             }
 
             if (passwordString.isEmpty()) {
                 password.setError("Por favor digite uma senha!");
+                password.requestFocus();
                 ok = false;
             }
 
@@ -162,8 +163,22 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
                             btnLogin.setEnabled(true);
                             register.setEnabled(true);
-
-                            showToast("Login inválido!");
+                            if (task.getException() instanceof FirebaseAuthInvalidUserException){
+                                showToast("Usuário não cadastrado!");
+                            }
+                            else if (task.getException() instanceof FirebaseNetworkException){
+                                showToast("Você precisa estar conectado a internet!");
+                            }
+                            else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException){
+                                if (((FirebaseAuthInvalidCredentialsException) task.getException()).getErrorCode().equals("ERROR_INVALID_EMAIL")){
+                                    showToast("O endereço de e-mail está inválido!");
+                                }
+                                else if (((FirebaseAuthInvalidCredentialsException) task.getException()).getErrorCode().equals("ERROR_WRONG_PASSWORD")){
+                                    showToast("A senha está incorreta!");
+                                }
+                                else showToast("Os dados estão incorretos!");
+                            }
+                            else showToast("Não foi possível realizar o login!");
 
                             return;
                         }
@@ -173,7 +188,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        showSnackbar(connectionResult.getErrorMessage());
+        showToast(connectionResult.getErrorMessage());
     }
 
     private boolean isNameOk(User user, FirebaseUser firebaseUser) {

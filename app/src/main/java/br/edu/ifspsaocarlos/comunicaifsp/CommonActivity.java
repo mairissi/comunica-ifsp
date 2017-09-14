@@ -3,7 +3,6 @@ package br.edu.ifspsaocarlos.comunicaifsp;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -16,7 +15,7 @@ import com.google.android.gms.common.ConnectionResult;
 
 abstract public class CommonActivity extends AppCompatActivity {
 
-    protected AutoCompleteTextView email;
+    protected EditText email;
     protected EditText password;
     protected ProgressBar progressBar;
 

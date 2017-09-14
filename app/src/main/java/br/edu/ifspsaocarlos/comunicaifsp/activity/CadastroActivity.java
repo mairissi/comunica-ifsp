@@ -12,13 +12,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-
-import java.math.BigDecimal;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.Mask;
@@ -114,31 +115,55 @@ public class CadastroActivity extends CommonActivity
 
         if(name.getText().toString().isEmpty()){
             name.setError("Nome não informado!");
+            name.requestFocus();
             noError = false;
         }
 
         if(cpf.getText().toString().isEmpty()){
             cpf.setError("CPF não informado!");
+            cpf.requestFocus();
             noError = false;
         }
 
         if(ra.getText().toString().isEmpty()){
             ra.setError("RA não informado!");
+            ra.requestFocus();
             noError = false;
         }
 
         if(email.getText().toString().isEmpty()){
             email.setError("E-mail não informado!");
+            email.requestFocus();
             noError = false;
         }
 
         if(password.getText().toString().isEmpty()){
             password.setError("Por favor digite uma senha!");
+            password.requestFocus();
             noError = false;
         }
 
         if(noError){
-            noError = verifyCPFAndEmail();
+            Boolean validateCPF = Validator.validateCPF(cpf.getText().toString());
+
+            if (!validateCPF) {
+                cpf.setError("CPF inválido");
+                cpf.setFocusable(true);
+                cpf.requestFocus();
+                closeProgressBar();
+                noError = false;
+            }
+
+            Boolean validateEmail = Validator.validateEmail(email.getText().toString());
+
+            if (!validateEmail) {
+                email.setError("Email inválido");
+                email.setFocusable(true);
+                email.requestFocus();
+                closeProgressBar();
+                noError = false;
+            }
+
             if(noError) {
                 FabCadastrar.setEnabled(false);
                 progressBar.setFocusable(true);
@@ -152,25 +177,8 @@ public class CadastroActivity extends CommonActivity
         }
         else{
             closeProgressBar();
+
         }
-    }
-
-    private boolean verifyCPFAndEmail (){
-        Boolean noError = Validator.validateCPF(cpf.getText().toString());
-
-        if (!noError) {
-            closeProgressBar();
-            cpf.setError("CPF inválido");
-        }
-
-        noError = Validator.validateEmail(email.getText().toString());
-
-        if (!noError) {
-            closeProgressBar();
-            email.setError("Email inválido");
-        }
-
-        return noError;
     }
 
     private void saveUsuario() {
@@ -189,7 +197,16 @@ public class CadastroActivity extends CommonActivity
         }).addOnFailureListener(this, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                showSnackbar(e.getMessage());
+                if (e instanceof FirebaseAuthWeakPasswordException){
+                    showToast("A senha deve ter no mínimo 6 caracteres!");
+                }
+                else if (e instanceof FirebaseAuthUserCollisionException){
+                    showToast("Esse endereço de e-mail já foi cadastrado!");
+                }
+                else if (e instanceof FirebaseNetworkException){
+                    showToast("Você precisa estar conectado a internet!");
+                }
+                else showToast("Não foi possível realizar o cadastro!");
                 FabCadastrar.setEnabled(true);
             }
         });
@@ -199,14 +216,14 @@ public class CadastroActivity extends CommonActivity
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         mAuth.signOut();
 
-        showSnackbar("Conta criada com sucesso!");
+        showToast("Conta criada com sucesso!");
         closeProgressBar();
         finish();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        showSnackbar(connectionResult.getErrorMessage());
+        showToast(connectionResult.getErrorMessage());
     }
 
     @Override
