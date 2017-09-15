@@ -23,6 +23,9 @@
         <activity android:name=".activity.CadastroActivity">
             android:windowSoftInputMode="stateVisible|adjustResize"
         </activity>
+        <activity android:name=".activity.TopicoActivity">
+        </activity>
+        <activity android:name=".activity.CadastroTopicoActivity"/>
     </application>
 
 </manifest>
