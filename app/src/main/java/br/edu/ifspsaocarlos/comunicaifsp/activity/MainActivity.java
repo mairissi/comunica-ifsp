@@ -1,7 +1,11 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,13 +22,37 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private DrawerLayout container;
+    private NavigationView navigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        container = (DrawerLayout) findViewById(R.id.main_container);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                int id = item.getItemId();
+
+                if (id == R.id.action_meusTopicos) {
+                    Intent goToTopico = new Intent(MainActivity.this, TopicoActivity.class);
+                    startActivity(goToTopico);
+                }
+                else if (id == R.id.action_logout){
+                    firebaseAuth.signOut();
+                }
+
+                return false;
+            }
+        });
 
         getSupportActionBar().setTitle("Comunica IFSP");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -54,13 +82,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // MENU
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -68,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
             finish();
+        }
+        else if (id == android.R.id.home){
+            container.openDrawer(GravityCompat.START);
         }
 
         return super.onOptionsItemSelected(item);

@@ -3,10 +3,16 @@
     <string name="email">Email</string>
     <string name="senha">Senha</string>
     <string name="conectar">Conectar</string>
+    <string name="cadastrar">Cadastrar</string>
     <string name="nome">Nome</string>
     <string name="ra">R.A.</string>
     <string name="cpf">CPF</string>
     <string name="sem_cadastro">Não possui cadastro? Cadastre-se</string>
     <string name="login_sucesso">Parabéns você conseguiu se cadastrar e fazer login com sucesso!</string>
     <string name="sair">Sair</string>
+    <string name="home">Home</string>
+    <string name="meuPerfil">Perfil</string>
+    <string name="meusTopicos">Tópicos</string>
+    <string name="descricao">Descrição</string>
+    <string name="curso">Curso</string>
 </resources>

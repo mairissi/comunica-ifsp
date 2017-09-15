@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/person_photo"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:src="@drawable/background_navigator"
+            android:scaleType="center" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/nav_image_profile"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:scaleType="centerCrop"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="68dp"
+                android:src="@mipmap/ic_launcher_round"/>
+
+            <TextView
+                android:id="@+id/nav_name_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/nav_image_profile"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="16dp"
+                android:textStyle="bold"
+                android:text="Maísa Rissi"/>
+
+            <TextView
+                android:id="@+id/nav_email_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="maisa@maisa.as"
+                android:paddingTop="8dp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/nav_name_label"/>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
