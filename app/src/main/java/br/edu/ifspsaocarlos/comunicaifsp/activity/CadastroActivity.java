@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -37,13 +38,13 @@ public class CadastroActivity extends CommonActivity
     private AutoCompleteTextView cpf;
     private AutoCompleteTextView ra;
 
-    private FloatingActionButton FabCadastrar;
+    private Button btnCadastrar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
-        FabCadastrar = (FloatingActionButton) findViewById(R.id.fab_enviarDados_Cadastro);
+        btnCadastrar = (Button) findViewById(R.id.btn_Cadastrar);
 
         initViews();
 
@@ -72,7 +73,7 @@ public class CadastroActivity extends CommonActivity
             }
         };
 
-        FabCadastrar.setOnClickListener(this);
+        btnCadastrar.setOnClickListener(this);
     }
 
     protected void initViews() {
@@ -165,7 +166,7 @@ public class CadastroActivity extends CommonActivity
             }
 
             if(noError) {
-                FabCadastrar.setEnabled(false);
+                btnCadastrar.setEnabled(false);
                 progressBar.setFocusable(true);
 
                 openProgressBar();
@@ -207,7 +208,7 @@ public class CadastroActivity extends CommonActivity
                     showToast("Você precisa estar conectado a internet!");
                 }
                 else showToast("Não foi possível realizar o cadastro!");
-                FabCadastrar.setEnabled(true);
+                btnCadastrar.setEnabled(true);
             }
         });
     }
