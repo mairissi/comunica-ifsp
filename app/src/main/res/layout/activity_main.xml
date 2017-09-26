@@ -5,7 +5,8 @@
     android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.edu.ifspsaocarlos.comunicaifsp.activity.MainActivity">
+    tools:context="br.edu.ifspsaocarlos.comunicaifsp.activity.MainActivity"
+    android:focusableInTouchMode="true">
 
     <LinearLayout
         android:layout_width="match_parent"
