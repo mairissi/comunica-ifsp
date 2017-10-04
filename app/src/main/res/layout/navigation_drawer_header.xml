@@ -10,8 +10,8 @@
         <ImageView
             android:id="@+id/person_photo"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:src="@drawable/background_navigator"
+            android:layout_height="220dp"
+            android:src="@drawable/background_navigator_1"
             android:scaleType="center" />
 
         <RelativeLayout
@@ -24,7 +24,7 @@
                 android:layout_height="76dp"
                 android:scaleType="centerCrop"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="68dp"
+                android:layout_marginTop="50dp"
                 android:src="@mipmap/ic_launcher_round"/>
 
             <TextView
