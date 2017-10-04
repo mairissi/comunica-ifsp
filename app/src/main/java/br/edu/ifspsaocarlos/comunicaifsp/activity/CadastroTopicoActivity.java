@@ -2,6 +2,7 @@ package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,17 +10,32 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
+import br.edu.ifspsaocarlos.comunicaifsp.Topic;
 
 /**
  * Created by MRissi on 15-Sep-17.
  */
 
-public class CadastroTopicoActivity extends CommonActivity implements View.OnClickListener{
+public class CadastroTopicoActivity extends CommonActivity
+        implements DatabaseReference.CompletionListener, View.OnClickListener{
 
-
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private Topic topic;
     private AutoCompleteTextView name;
     private AutoCompleteTextView description;
     private AutoCompleteTextView course;
@@ -86,17 +102,11 @@ public class CadastroTopicoActivity extends CommonActivity implements View.OnCli
             noError = false;
         }
 
-        if(noError){
+        if (noError) {
             btnCadastrarTopico.setEnabled(false);
-            showToast("Tópico cadastrado com sucesso!");
-            saveTopic();
+            topic.saveDB(CadastroTopicoActivity.this);
         }
 
-    }
-
-    private void saveTopic() {
-        Intent intent = new Intent(this, TopicoActivity.class);
-        startActivity(intent);
     }
 
     @Override
@@ -108,5 +118,16 @@ public class CadastroTopicoActivity extends CommonActivity implements View.OnCli
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+        showToast("Tópico cadastrado com sucesso!");
+        finish();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        showToast(connectionResult.getErrorMessage());
     }
 }

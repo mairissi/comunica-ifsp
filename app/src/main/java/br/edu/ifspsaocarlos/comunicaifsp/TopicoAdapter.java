@@ -17,10 +17,10 @@ import java.util.List;
 public class TopicoAdapter extends RecyclerView.Adapter<TopicoAdapter.MyViewHolder> {
 
     //TODO criar uma ArrayList<Topico> do tipo tópico
-    ArrayList<String> list;
+    ArrayList<Topic> list;
 
     //TODO passar a ArrayList<Topico>
-    public TopicoAdapter(ArrayList<String> list){
+    public TopicoAdapter(ArrayList<Topic> list){
         this.list = list;
     }
 
@@ -34,11 +34,11 @@ public class TopicoAdapter extends RecyclerView.Adapter<TopicoAdapter.MyViewHold
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         //Tipo da lista (topico)
-        String celula = list.get(position);
+        Topic celula = list.get(position);
         //GetMsg do Topico
-        holder.txt_msg.setText(celula);
+        holder.txt_msg.setText(celula.getDescription());
         //GetName do Topico
-        holder.txt_name.setText(celula);
+        holder.txt_name.setText(celula.getName());
     }
 
     @Override
