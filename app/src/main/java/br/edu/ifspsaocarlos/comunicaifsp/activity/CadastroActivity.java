@@ -76,6 +76,7 @@ public class CadastroActivity extends CommonActivity
         btnCadastrar.setOnClickListener(this);
     }
 
+    @Override
     protected void initViews() {
         name = (AutoCompleteTextView) findViewById(R.id.edt_Nome_Cadastro);
         cpf = (AutoCompleteTextView) findViewById(R.id.edt_CPF_Cadastro);
@@ -85,7 +86,8 @@ public class CadastroActivity extends CommonActivity
         progressBar = (ProgressBar) findViewById(R.id.sign_up_progress);
     }
 
-    protected void initUser() {
+    @Override
+    protected void initObject() {
         user = new User();
         user.setName(name.getText().toString());
         user.setCpf(cpf.getText().toString());
@@ -110,7 +112,7 @@ public class CadastroActivity extends CommonActivity
 
     @Override
     public void onClick(View v) {
-        initUser();
+        initObject();
 
         Boolean noError = true;
 
@@ -217,7 +219,7 @@ public class CadastroActivity extends CommonActivity
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         mAuth.signOut();
 
-        showToast("Conta criada com sucesso!");
+        showToast("Conta cadastrada com sucesso!");
         closeProgressBar();
         finish();
     }

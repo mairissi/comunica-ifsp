@@ -58,7 +58,7 @@ public class User {
 
     private void setCpfInMap(Map<String, Object> map) {
         if (getCpf() != null) {
-            map.put("name", getCpf());
+            map.put("cpf", getCpf());
         }
     }
     public void setCpfIfNull(String cpf) {
@@ -77,7 +77,7 @@ public class User {
 
     private void setRaInMap(Map<String, Object> map) {
         if (getRa() != null) {
-            map.put("name", getRa());
+            map.put("ra", getRa());
         }
     }
     public void setRaIfNull(String ra) {

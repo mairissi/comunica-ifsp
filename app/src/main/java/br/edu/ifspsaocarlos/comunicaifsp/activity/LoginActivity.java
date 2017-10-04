@@ -25,10 +25,9 @@ import br.edu.ifspsaocarlos.comunicaifsp.User;
 
 public class LoginActivity extends CommonActivity implements View.OnClickListener {
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private User user;
-
     private TextView register;
     private Button btnLogin;
 
@@ -37,8 +36,8 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        authStateListener = getFirebaseAuthResultHandler();
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = getFirebaseAuthResultHandler();
 
         initViews();
 
@@ -49,6 +48,15 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         btnLogin.setOnClickListener(this);
     }
 
+    private void verifyLogged(){
+        if( mAuth.getCurrentUser() != null ){
+            callMainActivity();
+        }
+        else{
+            mAuth.addAuthStateListener( mAuthListener );
+        }
+    }
+
     protected void initViews() {
         email = (EditText) findViewById(R.id.edt_Email_Login);
         password = (EditText) findViewById(R.id.edt_Senha_Login);
@@ -56,7 +64,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         register = (TextView) findViewById(R.id.txt_Register);
     }
 
-    protected void initUser() {
+    protected void initObject() {
         user = new User();
         user.setEmail(email.getText().toString());
         user.setPassword(password.getText().toString());
@@ -65,7 +73,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
 
-        initUser();
+        initObject();
 
         int id = v.getId();
         if (id == R.id.btn_Login) {
@@ -107,21 +115,11 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         verifyLogged();
     }
 
-    private void verifyLogged() {
-
-        if (firebaseAuth.getCurrentUser() != null) {
-            callMainActivity();
-        }
-        else {
-            firebaseAuth.addAuthStateListener(authStateListener);
-        }
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
-        if (authStateListener != null) {
-            firebaseAuth.removeAuthStateListener(authStateListener);
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
@@ -151,7 +149,7 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     }
 
     private void verifyLogin() {
-        firebaseAuth.signInWithEmailAndPassword(
+        mAuth.signInWithEmailAndPassword(
                 user.getEmail(),
                 user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

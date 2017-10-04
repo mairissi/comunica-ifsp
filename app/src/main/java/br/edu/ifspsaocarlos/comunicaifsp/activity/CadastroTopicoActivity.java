@@ -22,7 +22,7 @@ public class CadastroTopicoActivity extends CommonActivity implements View.OnCli
 
     private AutoCompleteTextView name;
     private AutoCompleteTextView description;
-    private AutoCompleteTextView curso;
+    private AutoCompleteTextView course;
 
     private Button btnCadastrarTopico;
 
@@ -44,44 +44,43 @@ public class CadastroTopicoActivity extends CommonActivity implements View.OnCli
     protected void initViews() {
         name = (AutoCompleteTextView) findViewById(R.id.edt_Nome_Topico);
         description = (AutoCompleteTextView) findViewById(R.id.edt_Descricao_Topico);
-        curso = (AutoCompleteTextView) findViewById(R.id.edt_Curso);
+        course = (AutoCompleteTextView) findViewById(R.id.edt_Curso);
         password = (AutoCompleteTextView) findViewById(R.id.edt_Senha_Topico);
     }
 
     @Override
-    protected void initUser() {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
+    protected void initObject() {
+        topic = new Topic();
+        topic.setName(name.getText().toString());
+        topic.setDescription(description.getText().toString());
+        topic.setCourse(course.getText().toString());
     }
 
     @Override
     public void onClick(View v) {
+        initObject();
 
         Boolean noError = true;
 
-        if(name.getText().toString().isEmpty()){
+        if (name.getText().toString().isEmpty()) {
             name.setError("Nome do tópico não informado!");
             name.requestFocus();
             noError = false;
         }
 
-        if(name.getText().toString().isEmpty()){
+        if (name.getText().toString().isEmpty()) {
             description.setError("Descrição não informada!");
             description.requestFocus();
             noError = false;
         }
 
-        if(curso.getText().toString().isEmpty()){
-            curso.setError("Curso não informado!");
-            curso.requestFocus();
+        if (course.getText().toString().isEmpty()) {
+            course.setError("Curso não informado!");
+            course.requestFocus();
             noError = false;
         }
 
-        if(password.getText().toString().isEmpty()){
+        if (password.getText().toString().isEmpty()) {
             password.setError("Nome não informado!");
             password.requestFocus();
             noError = false;

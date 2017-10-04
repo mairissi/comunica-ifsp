@@ -45,7 +45,7 @@ abstract public class CommonActivity extends AppCompatActivity {
 
     abstract protected void initViews();
 
-    abstract protected void initUser();
+    abstract protected void initObject();
 
     public abstract void onConnectionFailed(ConnectionResult connectionResult);
 }
