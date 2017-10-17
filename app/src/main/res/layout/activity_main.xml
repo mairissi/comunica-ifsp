@@ -17,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_sucesso"
-        android:layout_margin="50dp" />
+        android:layout_margin="50dp"
+        android:textAlignment="center"/>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

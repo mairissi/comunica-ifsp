@@ -217,7 +217,7 @@ public class CadastroActivity extends CommonActivity
 
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        mAuth.signOut();
+        //mAuth.signOut();
 
         showToast("Conta cadastrada com sucesso!");
         closeProgressBar();

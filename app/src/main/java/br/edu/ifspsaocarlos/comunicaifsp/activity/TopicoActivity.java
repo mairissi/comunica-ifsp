@@ -87,7 +87,9 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //modelFinal
+                        //Pode usar o modelFinal aqui
+                        Intent intent = new Intent(TopicoActivity.this, SigInTopicActivity.class);
+                        startActivity(intent);
                     }
                 });
             }
