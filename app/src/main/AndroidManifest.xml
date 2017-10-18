@@ -26,7 +26,7 @@
         <activity android:name=".activity.TopicoActivity">
         </activity>
         <activity android:name=".activity.CadastroTopicoActivity"/>
-        <activity android:name=".activity.SigInTopicActivity"/>
+        <activity android:name=".activity.SignInTopicActivity"/>
     </application>
 
 </manifest>

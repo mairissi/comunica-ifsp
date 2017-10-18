@@ -14,7 +14,7 @@ import br.edu.ifspsaocarlos.comunicaifsp.R;
  * Created by MRissi on 06-Oct-17.
  */
 
-public class SigInTopicActivity extends CommonActivity
+public class SignInTopicActivity extends CommonActivity
         implements DatabaseReference.CompletionListener, View.OnClickListener{
 
     protected void onCreate(Bundle savedInstanceState) {

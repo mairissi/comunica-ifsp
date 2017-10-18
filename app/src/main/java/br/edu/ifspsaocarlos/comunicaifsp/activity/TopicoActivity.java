@@ -21,11 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
-import br.edu.ifspsaocarlos.comunicaifsp.TopicoAdapter;
 import br.edu.ifspsaocarlos.comunicaifsp.view.TopicPresenter;
 
 /**
@@ -82,13 +79,13 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
             @Override
             protected void populateViewHolder(MyViewHolder viewHolder, Topic model, int position) {
                 final Topic modelFinal = model;
-                viewHolder.txt_name.setText(model.getName());
+                viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
                 viewHolder.txt_msg.setText(model.getDescription());
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //Pode usar o modelFinal aqui
-                        Intent intent = new Intent(TopicoActivity.this, SigInTopicActivity.class);
+                        Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
                         startActivity(intent);
                     }
                 });
