@@ -10,12 +10,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.squareup.picasso.Picasso;
 
 import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         container = (DrawerLayout) findViewById(R.id.main_container);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        configNavigationView();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -73,6 +79,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void configNavigationView(){
+       FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+       View header =  navigationView.getHeaderView(0);
+        CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);
+        TextView name = (TextView) header.findViewById(R.id.nav_name_label);
+        TextView email = (TextView) header.findViewById(R.id.nav_email_label);
+
+        if (user != null){
+            Picasso.with(this).load(user.getPhotoUrl()).placeholder(getResources().getDrawable(R.mipmap.ic_launcher_round)).into(profileImage);
+            name.setText(user.getDisplayName());
+            email.setText(user.getEmail());
+        }
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -91,7 +112,11 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else if (id == android.R.id.home){
-            container.openDrawer(GravityCompat.START);
+            if(container.isDrawerOpen(GravityCompat.START)){
+                container.closeDrawer(GravityCompat.START);
+            }else{
+                container.openDrawer(GravityCompat.START);
+            }
         }
 
         return super.onOptionsItemSelected(item);
