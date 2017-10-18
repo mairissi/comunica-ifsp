@@ -21,8 +21,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.TopicoAdapter;
 import br.edu.ifspsaocarlos.comunicaifsp.view.TopicPresenter;
 
 /**
@@ -85,7 +89,8 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
                     @Override
                     public void onClick(View v) {
                         //Pode usar o modelFinal aqui
-                        Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
+                        Intent intent = new Intent(TopicoActivity.this, SigInTopicActivity.class);
+                        intent.putExtra("topic", modelFinal);
                         startActivity(intent);
                     }
                 });
