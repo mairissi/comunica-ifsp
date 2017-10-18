@@ -91,7 +91,11 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else if (id == android.R.id.home){
-            container.openDrawer(GravityCompat.START);
+            if(container.isDrawerOpen(GravityCompat.START)){
+                container.closeDrawer(GravityCompat.START);
+            }else{
+                container.openDrawer(GravityCompat.START);
+            }
         }
 
         return super.onOptionsItemSelected(item);
