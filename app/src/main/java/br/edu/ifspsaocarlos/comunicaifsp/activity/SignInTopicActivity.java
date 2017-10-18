@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -19,7 +20,7 @@ public class SignInTopicActivity extends CommonActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sigin_topic);
+        setContentView(R.layout.signin_topic);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Sign In");
@@ -28,6 +29,16 @@ public class SignInTopicActivity extends CommonActivity
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
