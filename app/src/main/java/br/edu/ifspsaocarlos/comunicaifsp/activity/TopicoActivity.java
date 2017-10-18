@@ -89,7 +89,7 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
                     @Override
                     public void onClick(View v) {
                         //Pode usar o modelFinal aqui
-                        Intent intent = new Intent(TopicoActivity.this, SigInTopicActivity.class);
+                        Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
                         intent.putExtra("topic", modelFinal);
                         startActivity(intent);
                     }
