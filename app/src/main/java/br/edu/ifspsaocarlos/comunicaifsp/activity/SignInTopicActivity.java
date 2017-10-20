@@ -3,33 +3,45 @@ package br.edu.ifspsaocarlos.comunicaifsp.activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
+import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.User;
 
 /**
  * Created by MRissi on 06-Oct-17.
  */
 
 public class SignInTopicActivity extends CommonActivity
-        implements DatabaseReference.CompletionListener, View.OnClickListener{
+        implements DatabaseReference.CompletionListener, View.OnClickListener {
 
     private TextView name;
     private TextView course;
     private TextView description;
-    Topic topic;
+    private EditText topicPassword;
+    private Button signUserInTopicBtn;
+    private Topic topic;
+    private FirebaseAuth mAuth;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signin_topic);
 
         initViews();
+        signUserInTopicBtn.setOnClickListener(this);
 
         topic = (Topic) getIntent().getSerializableExtra("topic");
 
@@ -41,9 +53,22 @@ public class SignInTopicActivity extends CommonActivity
         getSupportActionBar().setTitle("Sign In");
 
     }
+
     @Override
     public void onClick(View v) {
 
+        if (topicPassword.toString().isEmpty()) {
+            topicPassword.setError("Por favor digite uma senha!");
+            topicPassword.requestFocus();
+        } else {
+            if (topicPassword.toString().equals(topic.getPassword())) {
+                //TODO get o current user do app, salva o current topic nele (na lista), binda a passagem pra proxima tela (topic messages);
+
+            } else {
+                topicPassword.setError("Senha Incorreta!");
+                topicPassword.requestFocus();
+            }
+        }
     }
 
     @Override
@@ -61,6 +86,8 @@ public class SignInTopicActivity extends CommonActivity
         name = (TextView) findViewById(R.id.topic_name);
         course = (TextView) findViewById(R.id.topic_course);
         description = (TextView) findViewById(R.id.topic_description);
+        topicPassword = (EditText) findViewById(R.id.edt_Senha_Signin_Topico);
+        signUserInTopicBtn = (Button) findViewById(R.id.btn_Cadastrar_Signin_Topico);
     }
 
     @Override

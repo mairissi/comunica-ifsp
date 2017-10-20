@@ -3,14 +3,15 @@ package br.edu.ifspsaocarlos.comunicaifsp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by MRissi on 13-Sep-17.
  */
 
-public class User {
+public class User implements Serializable{
 
     private String idUser;
     private String name;
@@ -18,8 +19,17 @@ public class User {
     private String ra;
     private String email;
     private String password;
+    private List<Topic> signedTopicsList;
 
     public User() {}
+
+    public List<Topic> getSignedTopicsList() {
+        return signedTopicsList;
+    }
+
+    public void setSignedTopicsList(List<Topic> signedTopicsList) {
+        this.signedTopicsList = signedTopicsList;
+    }
 
     public String getIdUser() {
         return idUser;

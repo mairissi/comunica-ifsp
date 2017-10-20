@@ -85,7 +85,7 @@
                     android:layout_marginTop="5dp" >
 
                     <EditText
-                        android:id="@+id/edt_Senha_Login"
+                        android:id="@+id/edt_Senha_Signin_Topico"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/senha"
@@ -94,7 +94,7 @@
                 </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/btn_Login"
+                android:id="@+id/btn_Cadastrar_Signin_Topico"
                 android:layout_width="match_parent"
                 android:layout_marginTop="16dp"
                 android:layout_height="56dp"
