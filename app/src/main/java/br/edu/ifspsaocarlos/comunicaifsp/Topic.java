@@ -1,11 +1,6 @@
 package br.edu.ifspsaocarlos.comunicaifsp;
 
-import android.support.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
@@ -97,7 +92,6 @@ public class Topic implements Serializable{
         }
     }
 
-    @Exclude
     public String getPassword() {
         return password;
     }
@@ -107,8 +101,11 @@ public class Topic implements Serializable{
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {
-        DatabaseReference firebase = LibraryClass.getFirebase().child("topics").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push();
         DatabaseReference firebaseReference = LibraryClass.getFirebase().child("generalTopic").push();
+        String topicKey = firebaseReference.getKey();
+        DatabaseReference firebase = LibraryClass.getFirebase().child("topics").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(topicKey);
+
+        this.setIdTopic(topicKey);
 
         firebase.setValue(this, completionListener[0]);
         firebaseReference.setValue(this, completionListener[0]);

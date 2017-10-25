@@ -8,18 +8,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
-import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
-import br.edu.ifspsaocarlos.comunicaifsp.User;
 
 /**
  * Created by MRissi on 06-Oct-17.
@@ -61,8 +57,14 @@ public class SignInTopicActivity extends CommonActivity
             topicPassword.setError("Por favor digite uma senha!");
             topicPassword.requestFocus();
         } else {
-            if (topicPassword.toString().equals(topic.getPassword())) {
-                //TODO get o current user do app, salva o current topic nele (na lista), binda a passagem pra proxima tela (topic messages);
+            if (topicPassword.getText().toString().equals(topic.getPassword())) {
+                //TODO get o current user do app, salva o current topic nele (na lista), binda a passagem pra proxima tela (topic messages) -  DONE;
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                reference.child("usuario_topico").child(userId).setValue(topic);
+                reference.child("topico_e_usuario").child(topic.getIdTopic()).child(userId).setValue(topic);
+                //TODO chamar a intent para a tela de topico
 
             } else {
                 topicPassword.setError("Senha Incorreta!");
