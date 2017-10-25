@@ -42,7 +42,8 @@
                 android:layout_gravity="center"
                 android:layout_weight="0.14"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/ic_action_ir"/>
+                android:src="@drawable/ic_action_go"
+                android:scaleType="center"/>
 
         </LinearLayout>
 
@@ -68,7 +69,8 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_margin="12dp"
-            android:src="@drawable/ic_action_adicionar"/>
+            android:src="@drawable/ic_action_adicionar"
+            android:scaleType="center"/>
 
     </RelativeLayout>
 

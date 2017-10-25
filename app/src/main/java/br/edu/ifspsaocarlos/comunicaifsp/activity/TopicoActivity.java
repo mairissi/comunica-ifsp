@@ -60,6 +60,10 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
                     Intent goToMain = new Intent(TopicoActivity.this, MainActivity.class);
                     startActivity(goToMain);
                 }
+                else if (id == R.id.action_meuPerfil) {
+                    Intent goToTopico = new Intent(TopicoActivity.this, PerfilActivity.class);
+                    startActivity(goToTopico);
+                }
                 else if (id == R.id.action_logout){
                     FirebaseAuth.getInstance().signOut();
                 }
@@ -122,7 +126,11 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
             finish();
         }
         else if (id == android.R.id.home){
-            container.openDrawer(GravityCompat.START);
+            if(container.isDrawerOpen(GravityCompat.START)){
+                container.closeDrawer(GravityCompat.START);
+            }else{
+                container.openDrawer(GravityCompat.START);
+            }
         }
 
         return super.onOptionsItemSelected(item);

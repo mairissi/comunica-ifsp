@@ -30,6 +30,7 @@
         <activity android:name=".activity.CadastroTopicoActivity"/>
         <activity android:name=".activity.SignInTopicActivity"/>
         <activity android:name=".activity.PerfilActivity"/>
+        <activity android:name=".activity.TopicMessageActivity"/>
     </application>
 
 </manifest>

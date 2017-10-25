@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if (id == R.id.action_logout){
                     firebaseAuth.signOut();
-                } else if (id == R.id.action_meuPerfil){
+                }
+                else if (id == R.id.action_meuPerfil){
                     Intent goToProfile = new Intent(MainActivity.this, PerfilActivity.class);
                     startActivity(goToProfile);
                 }
