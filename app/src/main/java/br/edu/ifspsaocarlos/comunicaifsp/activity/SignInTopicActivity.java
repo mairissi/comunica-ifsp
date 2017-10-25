@@ -62,7 +62,7 @@ public class SignInTopicActivity extends CommonActivity
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                reference.child("usuario_topico").child(userId).setValue(topic);
+                reference.child("usuario_topico").child(userId).child(topic.getIdTopic()).setValue(topic);
                 reference.child("topico_e_usuario").child(topic.getIdTopic()).child(userId).setValue(topic);
                 //TODO chamar a intent para a tela de topico
 
