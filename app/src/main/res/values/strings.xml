@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ComunicaIFSP</string>
     <string name="email">Email</string>
-    <string name="senha">Senha</string>
+    <string name="password">Senha</string>
     <string name="conectar">Conectar</string>
     <string name="cadastrar">Cadastrar</string>
     <string name="nome">Nome</string>

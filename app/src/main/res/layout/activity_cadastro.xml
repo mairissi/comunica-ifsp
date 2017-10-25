@@ -103,7 +103,7 @@
                         android:id="@+id/edt_Senha_Cadastro"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/senha"
+                        android:hint="@string/password"
                         android:imeOptions="actionDone"
                         android:inputType="textPassword" />
                 </android.support.design.widget.TextInputLayout>

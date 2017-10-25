@@ -4,6 +4,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,15 +20,16 @@ public class User implements Serializable{
     private String ra;
     private String email;
     private String password;
-    private List<Topic> signedTopicsList;
+    private HashMap<String, Topic> signedTopicsList;
+
 
     public User() {}
 
-    public List<Topic> getSignedTopicsList() {
+    public HashMap<String, Topic> getSignedTopicsList() {
         return signedTopicsList;
     }
 
-    public void setSignedTopicsList(List<Topic> signedTopicsList) {
+    public void setSignedTopicsList(HashMap<String, Topic> signedTopicsList) {
         this.signedTopicsList = signedTopicsList;
     }
 
