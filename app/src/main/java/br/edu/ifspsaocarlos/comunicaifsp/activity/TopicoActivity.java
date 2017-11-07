@@ -18,8 +18,11 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -80,7 +83,7 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
 //
 //        TopicoAdapter adapter = new TopicoAdapter(list);
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
                 MyViewHolder.class, databaseReference.child("generalTopic")) {
@@ -93,9 +96,26 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
                     @Override
                     public void onClick(View v) {
                         //Pode usar o modelFinal aqui
-                        Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
-                        intent.putExtra("topic", modelFinal);
-                        startActivity(intent);
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
+                        ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    Intent intent = new Intent(TopicoActivity.this, TopicMessageActivity.class);
+                                    intent.putExtra("topic", modelFinal);
+                                    startActivity(intent);
+                                }else{
+                                    Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
+                                    intent.putExtra("topic", modelFinal);
+                                    startActivity(intent);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 });
             }
