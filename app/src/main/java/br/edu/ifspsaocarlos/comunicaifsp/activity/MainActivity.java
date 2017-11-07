@@ -8,11 +8,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +23,7 @@ import com.squareup.picasso.Picasso;
 
 import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
+import br.edu.ifspsaocarlos.comunicaifsp.Topic;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener authStateListener;
     private DrawerLayout container;
     private NavigationView navigationView;
+    private RecyclerView mTopicList;
+    private FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder> firebaseRecyclerAdapter;
+
 
 
     @Override
@@ -37,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         container = (DrawerLayout) findViewById(R.id.main_container);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mTopicList = (RecyclerView) findViewById(R.id.subscribedTopics);
+
+
         configNavigationView();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -80,14 +90,34 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder>(Topic.class, R.layout.cell_topico,
+                    TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                @Override
+                protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
+                    final Topic modelFinal = model;
+                    viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
+                    viewHolder.txt_msg.setText(model.getDescription());
+                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //TODO fazer a intent pra msg do topico
+                        }
+                    });
+                }
+            };
+        }
+
+
+        mTopicList.setAdapter(firebaseRecyclerAdapter);
+        mTopicList.setLayoutManager(new LinearLayoutManager(this));
     }
 
 
     public void configNavigationView(){
        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
        View header =  navigationView.getHeaderView(0);
-        CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);
-        TextView name = (TextView) header.findViewById(R.id.nav_name_label);
+        CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);TextView name = (TextView) header.findViewById(R.id.nav_name_label);
         TextView email = (TextView) header.findViewById(R.id.nav_email_label);
 
         if (user != null){
