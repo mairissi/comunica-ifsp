@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,12 +26,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends CommonActivity {
 
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
@@ -95,44 +97,49 @@ public class MainActivity extends AppCompatActivity {
         databaseReference.getRef();
 
 
-        mRecycler.setAdapter(new FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder>(Topic.class, R.layout.cell_topico,
-                TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-            @Override
-            protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
-                final Topic modelFinal = model;
-                viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
-                viewHolder.txt_msg.setText(model.getDescription());
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Pode usar o modelFinal aqui
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
-                        ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.exists()){
-                                    Intent intent = new Intent(MainActivity.this, TopicMessageActivity.class);
-                                    intent.putExtra("topic", modelFinal);
-                                    startActivity(intent);
-                                }else{
-                                    Intent intent = new Intent(MainActivity.this, SignInTopicActivity.class);
-                                    intent.putExtra("topic", modelFinal);
-                                    startActivity(intent);
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            getUserFlag();
+            mRecycler.setAdapter(new FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder>(Topic.class, R.layout.cell_topico,
+                    TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                @Override
+                protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
+                    final Topic modelFinal = model;
+                    viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
+                    viewHolder.txt_msg.setText(model.getDescription());
+                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //Pode usar o modelFinal aqui
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
+                            ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.exists()){
+                                        Intent intent = new Intent(MainActivity.this, TopicMessageActivity.class);
+                                        intent.putExtra("topic", modelFinal);
+                                        startActivity(intent);
+                                    }else{
+                                        Intent intent = new Intent(MainActivity.this, SignInTopicActivity.class);
+                                        intent.putExtra("topic", modelFinal);
+                                        startActivity(intent);
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        });
-                    }
-                });
-            }
-        });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
 
-        mRecycler.setLayoutManager(new LinearLayoutManager(this));
+            mRecycler.setLayoutManager(new LinearLayoutManager(this));
+        }
     }
+
+
 
 
     public void configNavigationView(){
@@ -176,5 +183,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void initViews() {
+
+    }
+
+    @Override
+    protected void initObject() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

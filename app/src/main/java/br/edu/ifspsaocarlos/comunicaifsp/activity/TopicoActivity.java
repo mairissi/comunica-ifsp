@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
 import br.edu.ifspsaocarlos.comunicaifsp.TopicoAdapter;
@@ -36,7 +38,7 @@ import br.edu.ifspsaocarlos.comunicaifsp.view.TopicPresenter;
  * Created by MRissi on 15-Sep-17.
  */
 
-public class TopicoActivity extends AppCompatActivity implements TopicPresenter {
+public class TopicoActivity extends CommonActivity implements TopicPresenter {
     RecyclerView rV;
     private DrawerLayout container;
     private NavigationView navigationView;
@@ -53,6 +55,13 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
         container = (DrawerLayout) findViewById(R.id.topico_container);
         rV = (RecyclerView) findViewById(R.id.recycler_view);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        if(!isUserProfessor()){
+            btnNovoTopico.setVisibility(View.GONE);
+        }else{
+            btnNovoTopico.setVisibility(View.VISIBLE);
+        }
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -162,6 +171,21 @@ public class TopicoActivity extends AppCompatActivity implements TopicPresenter 
                 message,
                 Toast.LENGTH_LONG)
                 .show();
+    }
+
+    @Override
+    protected void initViews() {
+
+    }
+
+    @Override
+    protected void initObject() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
