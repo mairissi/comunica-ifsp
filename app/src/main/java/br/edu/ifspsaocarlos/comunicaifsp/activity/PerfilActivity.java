@@ -3,8 +3,10 @@ package br.edu.ifspsaocarlos.comunicaifsp.activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
 
 import br.edu.ifspsaocarlos.comunicaifsp.Manifest;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
@@ -29,6 +40,7 @@ public class PerfilActivity extends AppCompatActivity {
     private EditText mPerfilEmail;
     private EditText mPerfilPassword;
     private Button mButton;
+    private Uri capturedUri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,9 +107,29 @@ public class PerfilActivity extends AppCompatActivity {
                     if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(PerfilActivity.this, new String[]{android.Manifest.permission.CAMERA}, 1);
                     }else{
+                        File file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
+                        if(!file.exists()){
+                            try {
+                                file.createNewFile();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        capturedUri = Uri.fromFile(file);
                         callCamera();
                     }
                 }else{
+                    File file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
+                    if(!file.exists()){
+                        try {
+                            file.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    capturedUri = Uri.fromFile(file);
                    callCamera();
                 }
 
@@ -158,7 +190,8 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private void updateProfile(){
-
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg");
+        UploadTask task = ref.putFile(capturedUri);
 
     }
 }
