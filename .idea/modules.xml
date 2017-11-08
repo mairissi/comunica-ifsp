@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ComunicaIFSP.iml" filepath="$PROJECT_DIR$/ComunicaIFSP.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/comunica-ifsp.iml" filepath="$PROJECT_DIR$/comunica-ifsp.iml" />
     </modules>
   </component>
 </project>
