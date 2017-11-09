@@ -16,25 +16,31 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends CommonActivity {
 
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private DrawerLayout container;
     private NavigationView navigationView;
-    private RecyclerView mTopicList;
-    private FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder> firebaseRecyclerAdapter;
+    private RecyclerView mRecycler;
+
 
 
 
@@ -44,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         container = (DrawerLayout) findViewById(R.id.main_container);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mTopicList = (RecyclerView) findViewById(R.id.subscribedTopics);
-
+        mRecycler = (RecyclerView) findViewById(R.id.meus_topicos);
 
         configNavigationView();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -74,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
+
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -95,8 +101,11 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
+
+
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder>(Topic.class, R.layout.cell_topico,
+            getUserFlag();
+            mRecycler.setAdapter(new FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder>(Topic.class, R.layout.cell_topico,
                     TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                 @Override
                 protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
@@ -106,17 +115,37 @@ public class MainActivity extends AppCompatActivity {
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //TODO fazer a intent pra msg do topico
+                            //Pode usar o modelFinal aqui
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
+                            ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.exists()){
+                                        Intent intent = new Intent(MainActivity.this, TopicMessageActivity.class);
+                                        intent.putExtra("topic", modelFinal);
+                                        startActivity(intent);
+                                    }else{
+                                        Intent intent = new Intent(MainActivity.this, SignInTopicActivity.class);
+                                        intent.putExtra("topic", modelFinal);
+                                        startActivity(intent);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     });
                 }
-            };
+            });
+
+            mRecycler.setLayoutManager(new LinearLayoutManager(this));
         }
-
-
-        mTopicList.setAdapter(firebaseRecyclerAdapter);
-        mTopicList.setLayoutManager(new LinearLayoutManager(this));
     }
+
+
 
 
     public void configNavigationView(){
@@ -159,5 +188,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void initViews() {
+
+    }
+
+    @Override
+    protected void initObject() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

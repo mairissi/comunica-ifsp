@@ -1,5 +1,7 @@
 package br.edu.ifspsaocarlos.comunicaifsp;
 
+import android.content.SharedPreferences;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
@@ -7,6 +9,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by MRissi on 13-Sep-17.
@@ -20,6 +24,7 @@ public class User implements Serializable{
     private String ra;
     private String email;
     private String password;
+    private boolean isProfessor = false;
     private HashMap<String, Topic> signedTopicsList;
 
 
@@ -117,7 +122,7 @@ public class User implements Serializable{
         }
     }
 
-    @Exclude
+
     public String getPassword() {
         return password;
     }
@@ -133,5 +138,13 @@ public class User implements Serializable{
         } else {
             firebase.setValue(this, completionListener[0]);
         }
+    }
+
+    public boolean getIsProfessor() {
+        return isProfessor;
+    }
+
+    public void setProfessor(boolean professor) {
+        isProfessor = professor;
     }
 }
