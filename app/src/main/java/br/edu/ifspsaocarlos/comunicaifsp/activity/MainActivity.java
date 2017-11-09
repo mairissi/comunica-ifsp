@@ -41,9 +41,6 @@ public class MainActivity extends CommonActivity {
     private NavigationView navigationView;
     private RecyclerView mRecycler;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +63,12 @@ public class MainActivity extends CommonActivity {
                 else if (id == R.id.action_logout){
                     firebaseAuth.signOut();
                 }
-                else if (id == R.id.action_meuPerfil){
+                else if (id == R.id.action_meuPerfil) {
                     Intent goToProfile = new Intent(MainActivity.this, PerfilActivity.class);
                     startActivity(goToProfile);
+                }
+                else if (id == R.id.action_home) {
+                    container.closeDrawer(GravityCompat.START);
                 }
 
                 return false;
@@ -110,7 +110,7 @@ public class MainActivity extends CommonActivity {
                 @Override
                 protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
                     final Topic modelFinal = model;
-                    viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
+                    viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase() + "] " + model.getName());
                     viewHolder.txt_msg.setText(model.getDescription());
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -120,11 +120,11 @@ public class MainActivity extends CommonActivity {
                             ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.exists()){
+                                    if (dataSnapshot.exists()) {
                                         Intent intent = new Intent(MainActivity.this, TopicMessageActivity.class);
                                         intent.putExtra("topic", modelFinal);
                                         startActivity(intent);
-                                    }else{
+                                    } else {
                                         Intent intent = new Intent(MainActivity.this, SignInTopicActivity.class);
                                         intent.putExtra("topic", modelFinal);
                                         startActivity(intent);

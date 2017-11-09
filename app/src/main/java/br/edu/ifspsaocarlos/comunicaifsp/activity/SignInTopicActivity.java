@@ -67,6 +67,7 @@ public class SignInTopicActivity extends CommonActivity
                 reference.child("usuario_topico_id").child(userId).child("id").setValue(topic.getIdTopic());
                 //TODO chamar a intent para a tela de topico
 
+
             } else {
                 topicPassword.setError("Senha Incorreta!");
                 topicPassword.requestFocus();

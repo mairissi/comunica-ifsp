@@ -79,6 +79,9 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                 else if (id == R.id.action_logout){
                     FirebaseAuth.getInstance().signOut();
                 }
+                else if (id == R.id.action_meusTopicos){
+                    container.closeDrawer(GravityCompat.START);
+                }
 
                 return false;
             }
