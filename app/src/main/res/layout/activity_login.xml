@@ -85,6 +85,22 @@
                     android:onClick="callRegister"
                     android:text="@string/sem_cadastro" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_EsqueceuSenha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:onClick="callRegister"
+                    android:text="@string/esqueceu_senha" />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

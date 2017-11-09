@@ -1,12 +1,12 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,10 +26,11 @@ import br.edu.ifspsaocarlos.comunicaifsp.User;
 public class LoginActivity extends CommonActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private User user;
     private TextView register;
+    private TextView reset;
     private Button btnLogin;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +38,12 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = getFirebaseAuthResultHandler();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Carregando");
 
         initViews();
 
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Login");
 
         btnLogin = (Button) findViewById(R.id.btn_Login);
@@ -49,19 +51,32 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     }
 
     private void verifyLogged(){
-        if( mAuth.getCurrentUser() != null ){
-            callMainActivity();
-        }
-        else{
-            mAuth.addAuthStateListener( mAuthListener );
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null){
+            user.reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(mAuth.getCurrentUser().isEmailVerified()){
+                        callMainActivity();
+                    }
+                }
+            });
         }
     }
 
     protected void initViews() {
         email = (EditText) findViewById(R.id.edt_Email_Login);
         password = (EditText) findViewById(R.id.edt_Senha_Login);
-        progressBar = (ProgressBar) findViewById(R.id.login_progress);
         register = (TextView) findViewById(R.id.txt_Register);
+        reset = (TextView) findViewById(R.id.txt_EsqueceuSenha);
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callResetActivity();
+            }
+        });
     }
 
     protected void initObject() {
@@ -98,13 +113,14 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
             if (ok) {
                 btnLogin.setEnabled(false);
                 register.setEnabled(false);
-                progressBar.setFocusable(true);
+                reset.setEnabled(false);
 
-                openProgressBar();
+                progressDialog.show();
+
                 verifyLogin();
             }
             else {
-                closeProgressBar();
+                progressDialog.dismiss();
             }
         }
     }
@@ -113,39 +129,6 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     protected void onStart() {
         super.onStart();
         verifyLogged();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    private FirebaseAuth.AuthStateListener getFirebaseAuthResultHandler() {
-        FirebaseAuth.AuthStateListener callback = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser userFirebase = firebaseAuth.getCurrentUser();
-
-                if (userFirebase == null) {
-                    return;
-                }
-
-                if (user.getIdUser() == null && isNameOk(user, userFirebase)) {
-
-                    user.setIdUser(userFirebase.getUid());
-                    user.setNameIfNull(userFirebase.getDisplayName());
-                    user.setEmailIfNull(userFirebase.getEmail());
-                    user.saveDB();
-                }
-
-                callMainActivity();
-            }
-        };
-        return (callback);
     }
 
     private void verifyLogin() {
@@ -157,10 +140,12 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (!task.isSuccessful()) {
-                            closeProgressBar();
+                            progressDialog.dismiss();
 
                             btnLogin.setEnabled(true);
                             register.setEnabled(true);
+                            reset.setEnabled(true);
+
                             if (task.getException() instanceof FirebaseAuthInvalidUserException){
                                 showToast("Usuário não cadastrado!");
                             }
@@ -180,6 +165,24 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
                             return;
                         }
+                        else {
+                            // Conseguiu Logar
+                            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                            if (firebaseUser.isEmailVerified()) {
+                                // Email confirmado. Permitir Login e cadastrar user no banco
+
+                                callMainActivity();
+                            }
+                            else {
+                                showToast("Email não verificado");
+                                btnLogin.setEnabled(true);
+                                register.setEnabled(true);
+                                reset.setEnabled(true);
+                                progressDialog.dismiss();
+                                return;
+                            }
+                        }
                     }
                 });
     }
@@ -187,10 +190,6 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         showToast(connectionResult.getErrorMessage());
-    }
-
-    private boolean isNameOk(User user, FirebaseUser firebaseUser) {
-        return (user.getName() != null || firebaseUser.getDisplayName() != null);
     }
 
     private void callMainActivity() {
@@ -202,5 +201,11 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     public void callRegister(View view) {
         Intent intent = new Intent(this, CadastroActivity.class);
         startActivity(intent);
+    }
+
+    public void callResetActivity() {
+        Intent intent = new Intent(LoginActivity.this, ResetActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

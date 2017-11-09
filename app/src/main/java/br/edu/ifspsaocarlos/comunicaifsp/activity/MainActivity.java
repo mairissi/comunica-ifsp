@@ -83,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
+                else {
+                    if (!firebaseAuth.getCurrentUser().isEmailVerified()) {
+                        firebaseAuth.signOut();
+                    }
+                }
             }
         };
 

@@ -1,14 +1,12 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ProgressBar;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,26 +17,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.Mask;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.User;
 import br.edu.ifspsaocarlos.comunicaifsp.Validator;
 
-public class CadastroActivity extends CommonActivity
-        implements DatabaseReference.CompletionListener, View.OnClickListener {
+public class CadastroActivity extends CommonActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private User user;
     private AutoCompleteTextView name;
     private AutoCompleteTextView cpf;
     private AutoCompleteTextView ra;
-
     private Button btnCadastrar;
+
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +41,10 @@ public class CadastroActivity extends CommonActivity
         btnCadastrar = (Button) findViewById(R.id.btn_Cadastrar);
 
         initViews();
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Carregando");
 
         //Mask CPF
         cpf.addTextChangedListener(Mask.insert("###.###.###-##", cpf));
@@ -59,20 +57,6 @@ public class CadastroActivity extends CommonActivity
 
         mAuth = FirebaseAuth.getInstance();
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
-                if (firebaseUser == null || user.getIdUser() != null) {
-                    return;
-                }
-
-                user.setIdUser(firebaseUser.getUid());
-                user.saveDB(CadastroActivity.this);
-            }
-        };
-
         btnCadastrar.setOnClickListener(this);
     }
 
@@ -83,7 +67,6 @@ public class CadastroActivity extends CommonActivity
         ra = (AutoCompleteTextView) findViewById(R.id.edt_RA_Cadastro);
         email = (AutoCompleteTextView) findViewById(R.id.edt_Email_Cadastro);
         password = (AutoCompleteTextView) findViewById(R.id.edt_Senha_Cadastro);
-        progressBar = (ProgressBar) findViewById(R.id.sign_up_progress);
     }
 
     @Override
@@ -94,20 +77,6 @@ public class CadastroActivity extends CommonActivity
         user.setRa(ra.getText().toString());
         user.setEmail(email.getText().toString());
         user.setPassword(password.getText().toString());
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthStateListener);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mAuthStateListener != null) {
-            mAuth.removeAuthStateListener(mAuthStateListener);
-        }
     }
 
     @Override
@@ -153,7 +122,6 @@ public class CadastroActivity extends CommonActivity
                 cpf.setError("CPF inválido");
                 cpf.setFocusable(true);
                 cpf.requestFocus();
-                closeProgressBar();
                 noError = false;
             }
 
@@ -163,24 +131,17 @@ public class CadastroActivity extends CommonActivity
                 email.setError("Email inválido");
                 email.setFocusable(true);
                 email.requestFocus();
-                closeProgressBar();
                 noError = false;
             }
 
             if(noError) {
                 btnCadastrar.setEnabled(false);
-                progressBar.setFocusable(true);
 
-                openProgressBar();
+                //progressDialog.show();
+
                 saveUsuario();
+                finish();
             }
-            else {
-                closeProgressBar();
-            }
-        }
-        else{
-            closeProgressBar();
-
         }
     }
 
@@ -193,9 +154,24 @@ public class CadastroActivity extends CommonActivity
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
-                if (!task.isSuccessful()) {
-                    closeProgressBar();
+                if (task.isSuccessful()) {
+                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+                    if (!firebaseUser.isEmailVerified()){
+                        firebaseUser.sendEmailVerification();
+                        showToast("Por favor, verifique seu e-mail.");
+
+                        //progressDialog.dismiss();
+                    }
+
+                    if (user.getIdUser() == null && isNameOk(user, firebaseUser)) {
+                        user.setIdUser(firebaseUser.getUid());
+                        user.setNameIfNull(firebaseUser.getDisplayName());
+                        user.setEmailIfNull(firebaseUser.getEmail());
+                        user.saveDB();
+                    }
                 }
+
             }
         }).addOnFailureListener(this, new OnFailureListener() {
             @Override
@@ -210,18 +186,15 @@ public class CadastroActivity extends CommonActivity
                     showToast("Você precisa estar conectado a internet!");
                 }
                 else showToast("Não foi possível realizar o cadastro!");
+
                 btnCadastrar.setEnabled(true);
+                //progressDialog.dismiss();
             }
         });
     }
 
-    @Override
-    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        //mAuth.signOut();
-
-        showToast("Conta cadastrada com sucesso!");
-        closeProgressBar();
-        finish();
+    private boolean isNameOk(User user, FirebaseUser firebaseUser) {
+        return (user.getName() != null || firebaseUser.getDisplayName() != null);
     }
 
     @Override
@@ -239,5 +212,4 @@ public class CadastroActivity extends CommonActivity
 
         return super.onOptionsItemSelected(item);
     }
-
 }
