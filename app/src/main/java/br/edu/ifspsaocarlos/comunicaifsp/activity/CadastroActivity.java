@@ -168,6 +168,7 @@ public class CadastroActivity extends CommonActivity implements View.OnClickList
                         user.setIdUser(firebaseUser.getUid());
                         user.setNameIfNull(firebaseUser.getDisplayName());
                         user.setEmailIfNull(firebaseUser.getEmail());
+                        user.setProfessor(false);
                         user.saveDB();
                     }
                 }
