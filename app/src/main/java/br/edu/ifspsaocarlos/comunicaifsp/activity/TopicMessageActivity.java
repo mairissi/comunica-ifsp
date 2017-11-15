@@ -23,7 +23,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
+import br.edu.ifspsaocarlos.comunicaifsp.Message;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
 
@@ -39,6 +43,7 @@ public class TopicMessageActivity extends CommonActivity
     private DrawerLayout container;
     private FloatingActionButton mFab;
     private Topic topic;
+    private Message message;
     private EditText mMsgBox;
     private RecyclerView mRecyclerView;
     private LinearLayout mMessageContainer;
@@ -48,17 +53,11 @@ public class TopicMessageActivity extends CommonActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_message);
 
-
         if (getIntent().getExtras() != null){
             topic = (Topic) getIntent().getExtras().get("topic");
         }
 
-        container = (DrawerLayout) findViewById(R.id.message_container);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mMsgBox = (EditText) findViewById(R.id.shipper_field);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mFab = (FloatingActionButton) findViewById(R.id.fab_send_message);
-        mMessageContainer = (LinearLayout) findViewById(R.id.message_sender_container);
+        initViews();
 
         if(!isUserProfessor()){
             mMessageContainer.setVisibility(View.GONE);
@@ -93,13 +92,13 @@ public class TopicMessageActivity extends CommonActivity
         });
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        final FirebaseRecyclerAdapter<String, MyOtherHolder> holder =  new FirebaseRecyclerAdapter<String, MyOtherHolder>(String.class, R.layout.cell_topic_messages,
+        final FirebaseRecyclerAdapter<Message, MyOtherHolder> holder =  new FirebaseRecyclerAdapter<Message, MyOtherHolder>(Message.class, R.layout.cell_topic_messages,
                 MyOtherHolder.class, databaseReference.child("topicos_mensagem").child(topic.getIdTopic())) {
 
             @Override
-            protected void populateViewHolder(MyOtherHolder viewHolder, String model, int position) {
-                viewHolder.txt_msg.setText(model);
-
+            protected void populateViewHolder(MyOtherHolder viewHolder, Message model, int position) {
+                viewHolder.txt_msg.setText(model.getMessage());
+                viewHolder.txt_date.setText(model.getDate());
             }
         };
         final LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -130,9 +129,10 @@ public class TopicMessageActivity extends CommonActivity
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               DatabaseReference ref = FirebaseDatabase.getInstance().getReference("topicos_mensagem");
+                initObject();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("topicos_mensagem");
                 String key = ref.push().getKey();
-                ref.child(topic.getIdTopic()).child(key).setValue(mMsgBox.getText().toString());
+                ref.child(topic.getIdTopic()).child(key).setValue(message);
                 mMsgBox.setText("");
             }
         });
@@ -146,12 +146,23 @@ public class TopicMessageActivity extends CommonActivity
 
     @Override
     protected void initViews() {
-
+        container = (DrawerLayout) findViewById(R.id.message_container);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mMsgBox = (EditText) findViewById(R.id.shipper_field);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mFab = (FloatingActionButton) findViewById(R.id.fab_send_message);
+        mMessageContainer = (LinearLayout) findViewById(R.id.message_sender_container);
     }
 
     @Override
     protected void initObject() {
+        message = new Message();
+        message.setMessage(mMsgBox.getText().toString());
 
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        String formattedDate = df.format(calendar.getTime());
+        message.setDate(formattedDate);
     }
 
     @Override
@@ -185,13 +196,13 @@ public class TopicMessageActivity extends CommonActivity
 
 
     public static class MyOtherHolder extends RecyclerView.ViewHolder{
-        //TextView txt_name;
         TextView txt_msg;
+        TextView txt_date;
 
         public MyOtherHolder(View itemView) {
             super(itemView);
-            //txt_name = (TextView) itemView.findViewById(R.id.client_name);
             txt_msg = (TextView) itemView.findViewById(R.id.client_msg);
+            txt_date = (TextView) itemView.findViewById(R.id.client_date);
         }
     }
 }

@@ -14,7 +14,7 @@
     <string name="meuPerfil">Perfil</string>
     <string name="meusTopicos">Tópicos</string>
     <string name="descricao">Descrição</string>
-    <string name="curso">Curso</string>
+    <string name="curso">Sigla do curso</string>
     <string name="enviar">Enviar</string>
     <string name="esqueceu_senha">Esqueceu sua senha? Clique aqui</string>
 </resources>

@@ -122,13 +122,20 @@ public class User implements Serializable{
         }
     }
 
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean getIsProfessor() {
+        return isProfessor;
+    }
+
+    public void setProfessor(boolean professor) {
+        isProfessor = professor;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {
@@ -138,13 +145,5 @@ public class User implements Serializable{
         } else {
             firebase.setValue(this, completionListener[0]);
         }
-    }
-
-    public boolean getIsProfessor() {
-        return isProfessor;
-    }
-
-    public void setProfessor(boolean professor) {
-        isProfessor = professor;
     }
 }

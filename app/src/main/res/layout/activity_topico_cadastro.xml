@@ -62,7 +62,8 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/curso"
                         android:imeOptions="actionNext"
-                        android:inputType="textPersonName|textCapWords" />
+                        android:maxLength="3"
+                        android:inputType="textCapCharacters" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout

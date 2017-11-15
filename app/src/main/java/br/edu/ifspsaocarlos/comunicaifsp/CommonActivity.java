@@ -73,14 +73,6 @@ abstract public class CommonActivity extends AppCompatActivity {
                 .show();
     }
 
-    protected void openProgressBar(){
-        progressBar.setVisibility( View.VISIBLE );
-    }
-
-    protected void closeProgressBar(){
-        progressBar.setVisibility( View.GONE );
-    }
-
     abstract protected void initViews();
 
     abstract protected void initObject();

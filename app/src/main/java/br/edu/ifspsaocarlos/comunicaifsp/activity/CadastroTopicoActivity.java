@@ -88,7 +88,7 @@ public class CadastroTopicoActivity extends CommonActivity
         }
 
         if (password.getText().toString().isEmpty()) {
-            password.setError("Nome não informado!");
+            password.setError("Senha não informada!");
             password.requestFocus();
             noError = false;
         }

@@ -145,9 +145,6 @@ public class MainActivity extends CommonActivity {
         }
     }
 
-
-
-
     public void configNavigationView(){
        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
        View header =  navigationView.getHeaderView(0);

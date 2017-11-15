@@ -1,5 +1,6 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,16 +59,16 @@ public class SignInTopicActivity extends CommonActivity
             topicPassword.requestFocus();
         } else {
             if (topicPassword.getText().toString().equals(topic.getPassword())) {
-                //TODO get o current user do app, salva o current topic nele (na lista), binda a passagem pra proxima tela (topic messages) -  DONE;
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 reference.child("usuario_topico").child(userId).child(topic.getIdTopic()).setValue(topic);
                 reference.child("topico_e_usuario").child(topic.getIdTopic()).child(userId).setValue(topic);
                 reference.child("usuario_topico_id").child(userId).child("id").setValue(topic.getIdTopic());
-                //TODO chamar a intent para a tela de topico
 
-
+                //Redirecionar para a tela de mensagens
+                Intent intent = new Intent(SignInTopicActivity.this, TopicMessageActivity.class);
+                intent.putExtra("topic", topic);
+                startActivity(intent);
             } else {
                 topicPassword.setError("Senha Incorreta!");
                 topicPassword.requestFocus();
