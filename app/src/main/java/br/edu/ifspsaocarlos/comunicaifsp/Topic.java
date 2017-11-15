@@ -19,6 +19,7 @@ public class Topic implements Serializable{
     String description;
     String course;
     String password;
+    String creatorId;
     TopicPresenter presenter;
 
     public Topic() {}
@@ -71,6 +72,14 @@ public class Topic implements Serializable{
         if (this.description == null) {
             this.description = description;
         }
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
     }
 
     public String getCourse() {

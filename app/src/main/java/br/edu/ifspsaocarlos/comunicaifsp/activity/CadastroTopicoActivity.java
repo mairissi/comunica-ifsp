@@ -95,6 +95,7 @@ public class CadastroTopicoActivity extends CommonActivity
 
         if (noError) {
             btnCadastrarTopico.setEnabled(false);
+            topic.setIdTopic(FirebaseAuth.getInstance().getCurrentUser().getUid());
             topic.saveDB(CadastroTopicoActivity.this);
         }
 

@@ -59,8 +59,9 @@ public class TopicMessageActivity extends CommonActivity
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mFab = (FloatingActionButton) findViewById(R.id.fab_send_message);
         mMessageContainer = (LinearLayout) findViewById(R.id.message_sender_container);
+        boolean isSameUid = topic.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        if(!isUserProfessor()){
+        if(!isUserProfessor() && !isSameUid){
             mMessageContainer.setVisibility(View.GONE);
         }else{
             mMessageContainer.setVisibility(View.VISIBLE);
