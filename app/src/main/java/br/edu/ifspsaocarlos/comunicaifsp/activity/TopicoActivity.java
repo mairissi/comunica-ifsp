@@ -10,8 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -105,11 +103,13 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                             });
                         }
                     };
-                    //TODO MUDA o ICONE DO FAB PRA x PRA FICAR BACANA
+                    //Troca a imagem para X após clicar para buscar
+                    mSearchBtn.setImageResource(R.drawable.ic_clear);
                     rV.setAdapter(adapterMigue);
                     flagMigue = true;
                 }else{
-                    //TODO POE O ICONE DA SETA DE VOLTA AQUI
+                    //Volta o ícone para a seta para realizar nova busca
+                    mSearchBtn.setImageResource(R.drawable.ic_action_go);
                     mSearch.setText("");
                     flagMigue = false;
                     rV.setAdapter(firebaseRecyclerAdapter);

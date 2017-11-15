@@ -43,7 +43,7 @@ public class SignInTopicActivity extends CommonActivity
         topic = (Topic) getIntent().getSerializableExtra("topic");
 
         name.setText(topic.getName());
-        course.setText(": " + topic.getCourse());
+        course.setText(": " + topic.getCourse().toUpperCase());
         description.setText(topic.getDescription());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
