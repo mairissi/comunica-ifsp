@@ -11,6 +11,13 @@
         android:layout_height="match_parent"
         android:focusableInTouchMode="true">
 
+        <TextView
+            android:id="@+id/default_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Não há tópicos cadastrados"
+            android:layout_centerInParent="true"/>
+
     <LinearLayout
         android:id="@+id/set_container"
         android:layout_width="match_parent"

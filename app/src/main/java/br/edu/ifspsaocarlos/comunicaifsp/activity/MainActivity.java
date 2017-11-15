@@ -26,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
@@ -40,6 +42,7 @@ public class MainActivity extends CommonActivity {
     private DrawerLayout container;
     private NavigationView navigationView;
     private RecyclerView mRecycler;
+    private TextView mDefaultMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class MainActivity extends CommonActivity {
         container = (DrawerLayout) findViewById(R.id.main_container);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         mRecycler = (RecyclerView) findViewById(R.id.meus_topicos);
+        mDefaultMsg = (TextView) findViewById(R.id.default_msg);
 
         configNavigationView();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -109,6 +113,7 @@ public class MainActivity extends CommonActivity {
                     TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                 @Override
                 protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
+                    mDefaultMsg.setVisibility(View.GONE);
                     final Topic modelFinal = model;
                     viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase() + "] " + model.getName());
                     viewHolder.txt_msg.setText(model.getDescription());
@@ -120,7 +125,13 @@ public class MainActivity extends CommonActivity {
                             ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.exists()) {
+                                    boolean flag = false;
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                        HashMap<String, String> map = (HashMap<String, String>) snapshot.getValue();
+                                        flag =  map.containsValue(modelFinal.getIdTopic());
+                                    }
+
+                                    if(flag && ((HashMap<String, Object>) dataSnapshot.getValue()).containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                         Intent intent = new Intent(MainActivity.this, TopicMessageActivity.class);
                                         intent.putExtra("topic", modelFinal);
                                         startActivity(intent);

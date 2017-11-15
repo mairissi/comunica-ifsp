@@ -8,6 +8,15 @@
     tools:context="br.edu.ifspsaocarlos.comunicaifsp.activity.MainActivity"
     android:focusableInTouchMode="true">
 
+
+    <TextView
+        android:id="@+id/default_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Você não se registrou em nenhum tópico"
+        android:gravity="center"
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

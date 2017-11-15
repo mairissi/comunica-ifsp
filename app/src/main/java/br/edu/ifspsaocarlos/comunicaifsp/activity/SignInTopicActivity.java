@@ -65,6 +65,7 @@ public class SignInTopicActivity extends CommonActivity
                 reference.child("usuario_topico").child(userId).child(topic.getIdTopic()).setValue(topic);
                 reference.child("topico_e_usuario").child(topic.getIdTopic()).child(userId).setValue(topic);
                 reference.child("usuario_topico_id").child(userId).child("id").setValue(topic.getIdTopic());
+               // reference.child("topicos_mensagem").child(topic.getIdTopic()).setValue();
                 //TODO chamar a intent para a tela de topico
 
 

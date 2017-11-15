@@ -42,6 +42,7 @@ public class TopicMessageActivity extends CommonActivity
     private EditText mMsgBox;
     private RecyclerView mRecyclerView;
     private LinearLayout mMessageContainer;
+    private TextView mDefaultMsg;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class TopicMessageActivity extends CommonActivity
         }
 
         container = (DrawerLayout) findViewById(R.id.message_container);
+        mDefaultMsg = (TextView) findViewById(R.id.default_msg);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         mMsgBox = (EditText) findViewById(R.id.shipper_field);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -98,6 +100,7 @@ public class TopicMessageActivity extends CommonActivity
 
             @Override
             protected void populateViewHolder(MyOtherHolder viewHolder, String model, int position) {
+                mDefaultMsg.setVisibility(View.GONE);
                 viewHolder.txt_msg.setText(model);
 
             }
