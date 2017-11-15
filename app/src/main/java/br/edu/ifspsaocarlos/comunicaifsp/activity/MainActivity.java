@@ -77,7 +77,7 @@ public class MainActivity extends CommonActivity {
             }
         });
 
-        getSupportActionBar().setTitle("Meus Tópicos");
+        getSupportActionBar().setTitle("Meus TÃ³picos");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 

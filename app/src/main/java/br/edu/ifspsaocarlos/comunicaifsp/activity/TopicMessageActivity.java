@@ -101,7 +101,8 @@ public class TopicMessageActivity extends CommonActivity
             protected void populateViewHolder(MyOtherHolder viewHolder, Message model, int position) {
 				mDefaultMsg.setVisibility(View.GONE);
                 viewHolder.txt_msg.setText(model.getMessage());
-                viewHolder.txt_date.setText(model.getDate());            }
+                viewHolder.txt_date.setText(model.getDate());
+            }
         };
         final LinearLayoutManager manager = new LinearLayoutManager(this);
 
