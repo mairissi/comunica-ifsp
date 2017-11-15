@@ -2,6 +2,7 @@ package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,13 +18,17 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -157,12 +162,23 @@ public class MainActivity extends CommonActivity {
     public void configNavigationView(){
        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
        View header =  navigationView.getHeaderView(0);
-        CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);TextView name = (TextView) header.findViewById(R.id.nav_name_label);
+       final CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);TextView name = (TextView) header.findViewById(R.id.nav_name_label);
         TextView email = (TextView) header.findViewById(R.id.nav_email_label);
 
         if (user != null){
-            Picasso.with(this).load(user.getPhotoUrl()).placeholder(getResources().getDrawable(R.mipmap.ic_launcher_round)).into(profileImage);
-            name.setText(user.getDisplayName());
+            StorageReference ref = FirebaseStorage.getInstance().getReference();
+            ref.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.with(MainActivity.this).setLoggingEnabled(true);
+                    Picasso.with(MainActivity.this).load(uri).placeholder(getResources().getDrawable(R.mipmap.ic_launcher_round)).into(profileImage);
+                }
+            });
+            for (UserInfo userInfo : user.getProviderData()) {
+                if (userInfo.getDisplayName() != null) {
+                    name.setText(userInfo.getDisplayName());
+                }
+            }
             email.setText(user.getEmail());
         }
 
