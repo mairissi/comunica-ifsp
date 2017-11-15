@@ -45,9 +45,8 @@ public class MainActivity extends CommonActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        container = (DrawerLayout) findViewById(R.id.main_container);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mRecycler = (RecyclerView) findViewById(R.id.meus_topicos);
+
+        initViews();
 
         configNavigationView();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -75,7 +74,7 @@ public class MainActivity extends CommonActivity {
             }
         });
 
-        getSupportActionBar().setTitle("Comunica IFSP");
+        getSupportActionBar().setTitle("Meus Tópicos");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
@@ -189,7 +188,9 @@ public class MainActivity extends CommonActivity {
 
     @Override
     protected void initViews() {
-
+        container = (DrawerLayout) findViewById(R.id.main_container);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mRecycler = (RecyclerView) findViewById(R.id.meus_topicos);
     }
 
     @Override

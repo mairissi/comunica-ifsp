@@ -53,7 +53,7 @@ public class CadastroActivity extends CommonActivity implements View.OnClickList
         ra.addTextChangedListener(Mask.insert("######-#", ra));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Cadastro");
+        getSupportActionBar().setTitle("Cadastro Usuário");
 
         mAuth = FirebaseAuth.getInstance();
 

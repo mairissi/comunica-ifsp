@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
+import br.edu.ifspsaocarlos.comunicaifsp.Validator;
 
 /**
  * Created by MRissi on 08-Nov-17.
@@ -60,20 +61,32 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         final FirebaseAuth auth = FirebaseAuth.getInstance();
+        Boolean noError = true;
 
-        progressDialog.show();
+        Boolean validateEmail = Validator.validateEmail(email.getText().toString());
 
-        auth.sendPasswordResetEmail(email.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    showToast("Password resetado com sucesso!");
-                    Intent intent = new Intent(ResetActivity.this, MainActivity.class);
-                    startActivity(intent);
+        if (!validateEmail) {
+            email.setError("Email inválido");
+            email.setFocusable(true);
+            email.requestFocus();
+            noError = false;
+        }
+
+        if(noError) {
+            progressDialog.show();
+
+            auth.sendPasswordResetEmail(email.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        showToast("Password resetado com sucesso!");
+                        Intent intent = new Intent(ResetActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                    progressDialog.dismiss();
                 }
-                progressDialog.dismiss();
-            }
-        });
+            });
+        }
     }
 
     @Override

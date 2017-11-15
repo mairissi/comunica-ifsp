@@ -54,7 +54,7 @@ public class PerfilActivity extends AppCompatActivity {
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setTitle("Editar Perfil");
 
         setupButtonPerfil();
     }

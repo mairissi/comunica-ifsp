@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -25,13 +24,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
-import br.edu.ifspsaocarlos.comunicaifsp.TopicoAdapter;
 import br.edu.ifspsaocarlos.comunicaifsp.view.TopicPresenter;
 
 /**
@@ -51,10 +46,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topico);
 
-        btnNovoTopico = (FloatingActionButton) findViewById(R.id.btn_callNovoTopico);
-        container = (DrawerLayout) findViewById(R.id.topico_container);
-        rV = (RecyclerView) findViewById(R.id.recycler_view);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        initViews();
 
         if(!isUserProfessor()){
             btnNovoTopico.setVisibility(View.GONE);
@@ -178,7 +170,10 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
 
     @Override
     protected void initViews() {
-
+        btnNovoTopico = (FloatingActionButton) findViewById(R.id.btn_callNovoTopico);
+        container = (DrawerLayout) findViewById(R.id.topico_container);
+        rV = (RecyclerView) findViewById(R.id.recycler_view);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
     }
 
     @Override
