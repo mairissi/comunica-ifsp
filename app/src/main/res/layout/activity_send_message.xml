@@ -7,26 +7,26 @@
     android:focusableInTouchMode="true"
     android:id="@+id/message_container">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.75"
-            android:layout_below="@+id/set_container"/>
+        <TextView
+            android:id="@+id/default_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nenhuma mensagem encontrada !"
+            android:layout_centerInParent="true"/>
 
         <LinearLayout
             android:id="@+id/message_sender_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_alignParentBottom="true"
             android:baselineAligned="false"
             android:orientation="vertical">
 
@@ -64,7 +64,14 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/message_sender_container"
+            />
+
+    </RelativeLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"

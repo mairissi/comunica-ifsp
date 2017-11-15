@@ -47,6 +47,7 @@ public class TopicMessageActivity extends CommonActivity
     private EditText mMsgBox;
     private RecyclerView mRecyclerView;
     private LinearLayout mMessageContainer;
+    private TextView mDefaultMsg;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,9 +99,9 @@ public class TopicMessageActivity extends CommonActivity
 
             @Override
             protected void populateViewHolder(MyOtherHolder viewHolder, Message model, int position) {
+				mDefaultMsg.setVisibility(View.GONE);
                 viewHolder.txt_msg.setText(model.getMessage());
-                viewHolder.txt_date.setText(model.getDate());
-            }
+                viewHolder.txt_date.setText(model.getDate());            }
         };
         final LinearLayoutManager manager = new LinearLayoutManager(this);
 
@@ -153,6 +154,7 @@ public class TopicMessageActivity extends CommonActivity
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mFab = (FloatingActionButton) findViewById(R.id.fab_send_message);
         mMessageContainer = (LinearLayout) findViewById(R.id.message_sender_container);
+        mDefaultMsg = (TextView) findViewById(R.id.default_msg);
     }
 
     @Override

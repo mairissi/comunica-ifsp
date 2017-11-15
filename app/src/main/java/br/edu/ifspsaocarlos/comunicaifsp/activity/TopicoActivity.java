@@ -24,6 +24,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
@@ -37,6 +42,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
     RecyclerView rV;
     private DrawerLayout container;
     private NavigationView navigationView;
+    private TextView mDefaultMsg;
     FirebaseRecyclerAdapter<Topic, MyViewHolder> firebaseRecyclerAdapter;
 
     private FloatingActionButton btnNovoTopico;
@@ -92,7 +98,8 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
                 MyViewHolder.class, databaseReference.child("generalTopic")) {
             @Override
-            protected void populateViewHolder(MyViewHolder viewHolder, Topic model, int position) {
+            protected void populateViewHolder(MyViewHolder viewHolder, final Topic model, int position) {
+                mDefaultMsg.setVisibility(View.GONE);
                 final Topic modelFinal = model;
                 viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
                 viewHolder.txt_msg.setText(model.getDescription());
@@ -104,7 +111,13 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                         ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.exists()){
+                                boolean flag = false;
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                       HashMap<String, String> map = (HashMap<String, String>) snapshot.getValue();
+                                       flag =  map.containsValue(modelFinal.getIdTopic());
+                                }
+
+                                if(flag && ((HashMap<String, Object>) dataSnapshot.getValue()).containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                     Intent intent = new Intent(TopicoActivity.this, TopicMessageActivity.class);
                                     intent.putExtra("topic", modelFinal);
                                     startActivity(intent);
@@ -174,6 +187,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         container = (DrawerLayout) findViewById(R.id.topico_container);
         rV = (RecyclerView) findViewById(R.id.recycler_view);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mDefaultMsg = (TextView) findViewById(R.id.default_msg);
     }
 
     @Override
