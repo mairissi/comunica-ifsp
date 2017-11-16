@@ -80,7 +80,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                                 public void onClick(View v) {
                                     //Pode usar o modelFinal aqui
                                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
-                                    ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    ref.orderByChild(modelFinal.getIdTopic()).equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             if(dataSnapshot.exists()){
@@ -168,7 +168,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                     public void onClick(View v) {
                         //Pode usar o modelFinal aqui
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
-                        ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        ref.orderByChild(modelFinal.getIdTopic()).equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 boolean flag = false;

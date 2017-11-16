@@ -123,33 +123,9 @@ public class MainActivity extends CommonActivity {
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //Pode usar o modelFinal aqui
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
-                            ref.orderByChild("id").equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    boolean flag = false;
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                        HashMap<String, String> map = (HashMap<String, String>) snapshot.getValue();
-                                        flag =  map.containsValue(modelFinal.getIdTopic());
-                                    }
-
-                                    if(flag && ((HashMap<String, Object>) dataSnapshot.getValue()).containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                        Intent intent = new Intent(MainActivity.this, TopicMessageActivity.class);
-                                        intent.putExtra("topic", modelFinal);
-                                        startActivity(intent);
-                                    } else {
-                                        Intent intent = new Intent(MainActivity.this, SignInTopicActivity.class);
-                                        intent.putExtra("topic", modelFinal);
-                                        startActivity(intent);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
+                            Intent intent = new Intent(MainActivity.this, TopicMessageActivity.class);
+                            intent.putExtra("topic", modelFinal);
+                            startActivity(intent);
                         }
                     });
                 }
