@@ -11,6 +11,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
@@ -61,6 +62,7 @@ public class CadastroTopicoActivity extends CommonActivity
         topic.setDescription(description.getText().toString());
         topic.setCourse(course.getText().toString());
         topic.setPassword(password.getText().toString());
+        topic.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
     }
 
     @Override

@@ -61,7 +61,7 @@ public class TopicMessageActivity extends CommonActivity
         initViews();
         boolean isSameUid = topic.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        if(!isUserProfessor() && !isSameUid){
+        if(!isUserProfessor() || !isSameUid){
             mMessageContainer.setVisibility(View.GONE);
         }else{
             mMessageContainer.setVisibility(View.VISIBLE);
