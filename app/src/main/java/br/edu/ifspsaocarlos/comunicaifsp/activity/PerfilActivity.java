@@ -1,5 +1,6 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -53,6 +54,7 @@ public class PerfilActivity extends AppCompatActivity {
     private Button mButton;
     private Uri capturedUri;
     private File file;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +66,9 @@ public class PerfilActivity extends AppCompatActivity {
         mPerfilPassword = (EditText) findViewById(R.id.perfil_password);
         mButton = (Button) findViewById(R.id.perfil_button);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Atualizando");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Editar Perfil");
@@ -227,12 +232,14 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void updateProfile(){
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg");
+        progressDialog.show();
         if(capturedUri != null){
             UploadTask task = ref.putFile(capturedUri);
             task.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.d("TESTESS",e.getMessage());
+                    progressDialog.dismiss();
                 }
             });
         }
@@ -251,5 +258,12 @@ public class PerfilActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Perfil atualizado com sucesso !", Toast.LENGTH_LONG).show();
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 }

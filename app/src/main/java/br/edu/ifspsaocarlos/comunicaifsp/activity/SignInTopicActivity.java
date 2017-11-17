@@ -1,5 +1,6 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -31,13 +32,18 @@ public class SignInTopicActivity extends CommonActivity
     private EditText topicPassword;
     private Button signUserInTopicBtn;
     private Topic topic;
-    private FirebaseAuth mAuth;
+    ProgressDialog progressDialog;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signin_topic);
 
         initViews();
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Carregando");
+
         signUserInTopicBtn.setOnClickListener(this);
 
         topic = (Topic) getIntent().getSerializableExtra("topic");
@@ -58,6 +64,7 @@ public class SignInTopicActivity extends CommonActivity
             topicPassword.setError("Por favor digite uma senha!");
             topicPassword.requestFocus();
         } else {
+            progressDialog.show();
             if (topicPassword.getText().toString().equals(topic.getPassword())) {
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -70,6 +77,7 @@ public class SignInTopicActivity extends CommonActivity
                 intent.putExtra("topic", topic);
                 startActivity(intent);
             } else {
+                progressDialog.dismiss();
                 topicPassword.setError("Senha Incorreta!");
                 topicPassword.requestFocus();
             }
@@ -80,10 +88,19 @@ public class SignInTopicActivity extends CommonActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                onBackPressed();
+                Intent goToTopico = new Intent(SignInTopicActivity.this, TopicoActivity.class);
+                startActivity(goToTopico);
+                finish();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @Override

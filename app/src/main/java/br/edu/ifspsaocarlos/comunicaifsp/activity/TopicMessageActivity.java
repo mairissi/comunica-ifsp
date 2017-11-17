@@ -67,32 +67,6 @@ public class TopicMessageActivity extends CommonActivity
             mMessageContainer.setVisibility(View.VISIBLE);
         }
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                int id = item.getItemId();
-
-                if (id == R.id.action_home) {
-                    Intent goToMain = new Intent(TopicMessageActivity.this, MainActivity.class);
-                    startActivity(goToMain);
-                }
-                else if (id == R.id.action_logout){
-                    FirebaseAuth.getInstance().signOut();
-                }
-                else if (id == R.id.action_meuPerfil){
-                    Intent goToProfile = new Intent(TopicMessageActivity.this, PerfilActivity.class);
-                    startActivity(goToProfile);
-                }
-                else if (id == R.id.action_meusTopicos) {
-                    Intent goToTopico = new Intent(TopicMessageActivity.this, TopicoActivity.class);
-                    startActivity(goToTopico);
-                }
-
-                return false;
-            }
-        });
-
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         final FirebaseRecyclerAdapter<Message, MyOtherHolder> holder =  new FirebaseRecyclerAdapter<Message, MyOtherHolder>(Message.class, R.layout.cell_topic_messages,
                 MyOtherHolder.class, databaseReference.child("topicos_mensagem").child(topic.getIdTopic())) {
@@ -125,9 +99,8 @@ public class TopicMessageActivity extends CommonActivity
 
         mRecyclerView.setLayoutManager(manager);
 
-        getSupportActionBar().setTitle("Mensagens");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+        getSupportActionBar().setTitle("Mensagens");
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,16 +156,10 @@ public class TopicMessageActivity extends CommonActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_logout) {
-            FirebaseAuth.getInstance().signOut();
+        if (id == android.R.id.home){
+            Intent goToTopico = new Intent(TopicMessageActivity.this, MainActivity.class);
+            startActivity(goToTopico);
             finish();
-        }
-        else if (id == android.R.id.home){
-            if(container.isDrawerOpen(GravityCompat.START)){
-                container.closeDrawer(GravityCompat.START);
-            }else{
-                container.openDrawer(GravityCompat.START);
-            }
         }
 
         return super.onOptionsItemSelected(item);

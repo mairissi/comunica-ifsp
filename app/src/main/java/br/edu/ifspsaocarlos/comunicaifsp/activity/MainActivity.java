@@ -1,5 +1,6 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -46,6 +47,7 @@ public class MainActivity extends CommonActivity {
     private TextView mDefaultMsg;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,9 @@ public class MainActivity extends CommonActivity {
         setContentView(R.layout.activity_main);
 
         initViews();
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
 
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
@@ -70,9 +75,12 @@ public class MainActivity extends CommonActivity {
                     startActivity(goToTopico);
                 }
                 else if (id == R.id.action_logout){
+                    progressDialog.setMessage("Saindo");
+                    progressDialog.show();
                     editor.clear();
                     editor.commit();
                     firebaseAuth.signOut();
+                    finish();
                 }
                 else if (id == R.id.action_meuPerfil) {
                     Intent goToProfile = new Intent(MainActivity.this, PerfilActivity.class);
@@ -103,6 +111,7 @@ public class MainActivity extends CommonActivity {
                 else {
                     if (!firebaseAuth.getCurrentUser().isEmailVerified()) {
                         firebaseAuth.signOut();
+                        finish();
                     }
                 }
             }
@@ -115,11 +124,14 @@ public class MainActivity extends CommonActivity {
 
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             getUserFlag();
+            emptyList(user);
             mRecycler.setAdapter(new FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder>(Topic.class, R.layout.cell_topico,
-                    TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(user.getUid())) {
                 @Override
                 protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
+                    progressDialog.dismiss();
                     mDefaultMsg.setVisibility(View.GONE);
                     final Topic modelFinal = model;
                     viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase() + "] " + model.getName());
@@ -134,8 +146,10 @@ public class MainActivity extends CommonActivity {
                     });
                 }
             });
-
             mRecycler.setLayoutManager(new LinearLayoutManager(this));
+            if(progressDialog != null && progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
         }
     }
 
@@ -155,6 +169,7 @@ public class MainActivity extends CommonActivity {
                         User currentUser = dataSnapshot.getValue(User.class);
 
                         editor.putString("name", currentUser.getName());
+                        editor.putString("email", currentUser.getEmail());
                         editor.commit();
 
                         name.setText(pref.getString("name", null));
@@ -180,12 +195,45 @@ public class MainActivity extends CommonActivity {
 
     }
 
+    private void emptyList(FirebaseUser user){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico");
+        ref.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null)
+                    if(progressDialog != null && progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         if (authStateListener != null) {
             firebaseAuth.removeAuthStateListener(authStateListener);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        progressDialog.setMessage("Carregando");
+        progressDialog.show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
         }
     }
 

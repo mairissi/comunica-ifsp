@@ -36,7 +36,7 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Carregando");
+        progressDialog.setMessage("Enviando");
 
         initViews();
 
@@ -87,6 +87,13 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
                 }
             });
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @Override

@@ -119,9 +119,6 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
                 verifyLogin();
             }
-            else {
-                progressDialog.dismiss();
-            }
         }
     }
 
@@ -129,6 +126,13 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
     protected void onStart() {
         super.onStart();
         verifyLogged();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     private void verifyLogin() {
@@ -171,11 +175,11 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
 
                             if (firebaseUser.isEmailVerified()) {
                                 // Email confirmado. Permitir Login e cadastrar user no banco
-
+                                progressDialog.dismiss();
                                 callMainActivity();
                             }
                             else {
-                                showToast("Email não verificado");
+                                showToast("Por favor confirmar seu cadastro acessando seu e-mail.");
                                 btnLogin.setEnabled(true);
                                 register.setEnabled(true);
                                 reset.setEnabled(true);

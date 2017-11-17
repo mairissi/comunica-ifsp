@@ -137,7 +137,7 @@ public class CadastroActivity extends CommonActivity implements View.OnClickList
             if(noError) {
                 btnCadastrar.setEnabled(false);
 
-                //progressDialog.show();
+                progressDialog.show();
 
                 saveUsuario();
                 finish();
@@ -160,8 +160,6 @@ public class CadastroActivity extends CommonActivity implements View.OnClickList
                     if (!firebaseUser.isEmailVerified()){
                         firebaseUser.sendEmailVerification();
                         showToast("Por favor, verifique seu e-mail.");
-
-                        //progressDialog.dismiss();
                     }
 
                     if (user.getIdUser() == null && isNameOk(user, firebaseUser)) {
@@ -171,6 +169,8 @@ public class CadastroActivity extends CommonActivity implements View.OnClickList
                         user.setProfessor(false);
                         user.saveDB();
                     }
+
+                    progressDialog.dismiss();
                 }
 
             }
@@ -196,6 +196,13 @@ public class CadastroActivity extends CommonActivity implements View.OnClickList
 
     private boolean isNameOk(User user, FirebaseUser firebaseUser) {
         return (user.getName() != null || firebaseUser.getDisplayName() != null);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @Override
