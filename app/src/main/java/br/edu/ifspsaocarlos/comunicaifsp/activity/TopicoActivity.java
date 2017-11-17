@@ -89,12 +89,15 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                 if(!flagMigue){
                     progressDialog.setMessage("Buscando");
                     progressDialog.show();
+                    final Boolean[] existeTopico = {false};
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     adapterMigue = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
                             MyViewHolder.class, databaseReference.child("generalTopic").orderByChild("name").equalTo(mSearch.getText().toString())) {
                         @Override
                         protected void populateViewHolder(MyViewHolder viewHolder, Topic model, int position) {
                             progressDialog.dismiss();
+                            existeTopico[0] = true;
+                            mDefaultMsg.setVisibility(View.GONE);
                             final Topic modelFinal = model;
                             viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
                             viewHolder.txt_msg.setText(model.getDescription());
@@ -132,9 +135,9 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                             });
                         }
                     };
-                    if(!flagMigue){
-                        mDefaultMsg.setVisibility(View.VISIBLE);
+                    if(!existeTopico[0]){
                         progressDialog.dismiss();
+                        mDefaultMsg.setVisibility(View.VISIBLE);
                         mDefaultMsg.setText("Nenhum tópico foi encontrado!");
                     }
                     //Troca a imagem para X após clicar para buscar
