@@ -92,6 +92,17 @@ public class PerfilActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
+                    if(!file.exists()){
+                        try {
+                            file.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    capturedUri = Uri.fromFile(file);
                     callCamera();
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
@@ -130,7 +141,7 @@ public class PerfilActivity extends AppCompatActivity {
                         callCamera();
                     }
                 }else{
-                    File file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
+                     file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
                     if(!file.exists()){
                         try {
                             file.createNewFile();
@@ -155,6 +166,7 @@ public class PerfilActivity extends AppCompatActivity {
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 101) {
             if(data != null) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
