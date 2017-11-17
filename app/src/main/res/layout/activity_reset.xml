@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="br.edu.ifspsaocarlos.comunicaifsp.activity.ResetActivity">
+    tools:context="br.edu.ifspsaocarlos.comunicaifsp.activity.ResetActivity"
+    android:focusableInTouchMode="true">
 
     <ScrollView
         android:layout_width="match_parent"

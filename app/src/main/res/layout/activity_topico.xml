@@ -41,7 +41,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:layout_weight="0.72"
-                android:hint="Buscar tópicos" />
+                android:hint="Buscar tópicos"
+                android:imeOptions="actionDone"
+                android:inputType="textPersonName|textCapWords" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_buscarTopicos"

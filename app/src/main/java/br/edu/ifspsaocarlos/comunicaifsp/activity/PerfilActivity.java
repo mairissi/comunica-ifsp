@@ -2,6 +2,7 @@ package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
@@ -21,12 +22,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,26 +57,46 @@ public class PerfilActivity extends AppCompatActivity {
     private Button mButton;
     private Uri capturedUri;
     private File file;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
     ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
-        mPerfilImage = (CircleImageView) findViewById(R.id.perfil_image);
-        mPerfilName = (EditText) findViewById(R.id.perfil_name);
-        mPerfilEmail = (EditText) findViewById(R.id.perfil_email);
-        mPerfilPassword = (EditText) findViewById(R.id.perfil_password);
-        mButton = (Button) findViewById(R.id.perfil_button);
+
+        initViews();
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Atualizando");
 
+        pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        editor = pref.edit();
+        mPerfilName.setText(pref.getString("name", null));
+        mPerfilEmail.setText(pref.getString("email", null));
+
+        StorageReference ref = FirebaseStorage.getInstance().getReference();
+        ref.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(PerfilActivity.this).load(uri).placeholder(getResources().getDrawable(R.mipmap.ic_launcher_round)).into(mPerfilImage);
+            }
+        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Editar Perfil");
 
         setupButtonPerfil();
+    }
+
+    public void initViews(){
+        mPerfilImage = (CircleImageView) findViewById(R.id.perfil_image);
+        mPerfilName = (EditText) findViewById(R.id.perfil_name);
+        mPerfilEmail = (EditText) findViewById(R.id.perfil_email);
+        mPerfilPassword = (EditText) findViewById(R.id.perfil_password);
+        mButton = (Button) findViewById(R.id.perfil_button);
     }
 
     private void setupButtonPerfil(){
@@ -199,7 +222,9 @@ public class PerfilActivity extends AppCompatActivity {
         switch(item.getItemId()){
             case android.R.id.home:
                 if(mButton.getText().toString().toLowerCase().equals("editar")) {
-                    onBackPressed();
+                    Intent intent = new Intent(PerfilActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 }else{
                     disableFields();
                 }
@@ -213,6 +238,8 @@ public class PerfilActivity extends AppCompatActivity {
         mButton.setAlpha(1);
         mButton.setText("ATUALIZAR");
         mPerfilPassword.setVisibility(View.VISIBLE);
+        mPerfilEmail.setText("");
+        mPerfilName.setText("");
         mPerfilImage.setClickable(true);
         mPerfilEmail.setEnabled(true);
         mPerfilName.setEnabled(true);
@@ -223,6 +250,8 @@ public class PerfilActivity extends AppCompatActivity {
     private void disableFields(){
         mButton.setAlpha(0.5f);
         mButton.setText("EDITAR");
+        mPerfilName.setText(pref.getString("name", null));
+        mPerfilEmail.setText(pref.getString("email", null));
         mPerfilPassword.setVisibility(View.INVISIBLE);
         mPerfilImage.setClickable(false);
         mPerfilEmail.setEnabled(false);
@@ -257,6 +286,8 @@ public class PerfilActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Perfil atualizado com sucesso !", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(PerfilActivity.this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 

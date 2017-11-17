@@ -23,7 +23,9 @@
         android:layout_margin="16dp"
         android:layout_below="@id/perfil_image"
         android:enabled="false"
-        android:hint="Nome"/>
+        android:hint="Nome"
+        android:inputType="textPersonName|textCapWords"
+        android:imeOptions="actionNext"/>
     <EditText
         android:id="@+id/perfil_email"
         android:layout_width="match_parent"
@@ -32,7 +34,9 @@
         android:layout_margin="16dp"
         android:layout_below="@id/perfil_name"
         android:enabled="false"
-        android:hint="Email"/>
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:id="@+id/perfil_password"
@@ -44,8 +48,7 @@
         android:visibility="invisible"
         android:inputType="textPassword"
         android:hint="Password"
-
-        />
+        android:imeOptions="actionDone"/>
 
     <Button
         android:id="@+id/perfil_button"
