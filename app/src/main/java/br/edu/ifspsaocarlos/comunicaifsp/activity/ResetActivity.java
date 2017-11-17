@@ -132,7 +132,9 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                Intent goToMain = new Intent(ResetActivity.this, LoginActivity.class);
+                startActivity(goToMain);
+                finish();
         }
 
         return super.onOptionsItemSelected(item);
