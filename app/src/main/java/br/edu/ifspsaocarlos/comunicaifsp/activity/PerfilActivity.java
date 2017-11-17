@@ -38,6 +38,8 @@ import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.User;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.os.Environment.DIRECTORY_PICTURES;
+
 /**
  * Created by eu.nicekuba on 18/10/2017.
  */
@@ -93,7 +95,7 @@ public class PerfilActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
+                    file = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
                     if(!file.exists()){
                         try {
                             file.createNewFile();
@@ -128,7 +130,7 @@ public class PerfilActivity extends AppCompatActivity {
                     if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(PerfilActivity.this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                     }else{
-                        file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
+                        file = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
                         if(!file.exists()){
                             try {
                                 file.createNewFile();
@@ -141,7 +143,7 @@ public class PerfilActivity extends AppCompatActivity {
                         callCamera();
                     }
                 }else{
-                     file = new File(Environment.getExternalStorageDirectory(), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
+                     file = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES), (Calendar.getInstance().getTime().getTime() + ".jpg" ));
                     if(!file.exists()){
                         try {
                             file.createNewFile();
