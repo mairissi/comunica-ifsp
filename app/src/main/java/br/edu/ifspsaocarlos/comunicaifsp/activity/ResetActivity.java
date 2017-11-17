@@ -12,7 +12,10 @@ import android.widget.Button;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
@@ -82,8 +85,27 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
                         showToast("Password resetado com sucesso!");
                         Intent intent = new Intent(ResetActivity.this, MainActivity.class);
                         startActivity(intent);
+                    } else{
+                        progressDialog.dismiss();
+                        if (task.getException() instanceof FirebaseAuthInvalidUserException){
+                            showToast("Endereço de e-mail não cadastrado!");
+                        }
+                        else if (task.getException() instanceof FirebaseNetworkException){
+                            showToast("Você precisa estar conectado a internet!");
+                        }
+                        else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                            if (((FirebaseAuthInvalidCredentialsException) task.getException()).getErrorCode().equals("ERROR_INVALID_EMAIL")) {
+                                showToast("O endereço de e-mail está inválido!");
+                            }
+                            else{
+                                showToast("Não foi possível resetar a senha.");
+                            }
+                        }
+                        else {
+                            showToast("Não foi possível resetar a senha.");
+                        }
+                        return;
                     }
-                    progressDialog.dismiss();
                 }
             });
         }
