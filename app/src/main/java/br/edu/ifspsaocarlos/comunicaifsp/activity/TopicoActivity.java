@@ -1,6 +1,8 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,19 +20,26 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.User;
 import br.edu.ifspsaocarlos.comunicaifsp.view.TopicPresenter;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by MRissi on 15-Sep-17.
@@ -42,11 +51,12 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
     private NavigationView navigationView;
     private TextView mDefaultMsg;
     private EditText mSearch;
-    private String meuTextoQueEuProcuro = "";
     private FloatingActionButton mSearchBtn;
     private boolean flagMigue = false;
     FirebaseRecyclerAdapter<Topic, MyViewHolder> firebaseRecyclerAdapter;
     FirebaseRecyclerAdapter<Topic, MyViewHolder> adapterMigue;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
 
     private FloatingActionButton btnNovoTopico;
 
@@ -56,6 +66,11 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         setContentView(R.layout.activity_topico);
 
         initViews();
+
+        pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        editor = pref.edit();
+
+        configNavigationView();
 
         if(!isUserProfessor()){
             btnNovoTopico.setVisibility(View.GONE);
@@ -135,6 +150,8 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                     startActivity(goToTopico);
                 }
                 else if (id == R.id.action_logout){
+                    editor.clear();
+                    editor.commit();
                     FirebaseAuth.getInstance().signOut();
                 }
                 else if (id == R.id.action_meusTopicos){
@@ -219,6 +236,8 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
+            editor.clear();
+            editor.commit();
             FirebaseAuth.getInstance().signOut();
             finish();
         }
@@ -231,6 +250,47 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void configNavigationView(){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        View header =  navigationView.getHeaderView(0);
+        final CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);
+        final TextView name = (TextView) header.findViewById(R.id.nav_name_label);
+        TextView email = (TextView) header.findViewById(R.id.nav_email_label);
+
+        if (user != null){
+            if (user.getUid() != null) {
+                DatabaseReference refUser = FirebaseDatabase.getInstance().getReference("users");
+                refUser.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User currentUser = dataSnapshot.getValue(User.class);
+
+                        editor.putString("name", currentUser.getName());
+                        editor.commit();
+
+                        name.setText(pref.getString("name", null));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            email.setText(user.getEmail());
+
+            StorageReference ref = FirebaseStorage.getInstance().getReference();
+            ref.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.with(TopicoActivity.this).setLoggingEnabled(true);
+                    Picasso.with(TopicoActivity.this).load(uri).placeholder(getResources().getDrawable(R.mipmap.ic_launcher_round)).into(profileImage);
+                }
+            });
+        }
+
     }
 
     @Override

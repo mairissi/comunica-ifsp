@@ -1,17 +1,15 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -21,7 +19,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,12 +28,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
-
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.User;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends CommonActivity {
@@ -48,6 +44,8 @@ public class MainActivity extends CommonActivity {
     private NavigationView navigationView;
     private RecyclerView mRecycler;
     private TextView mDefaultMsg;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +54,11 @@ public class MainActivity extends CommonActivity {
 
         initViews();
 
+        pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        editor = pref.edit();
+
         configNavigationView();
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -68,6 +70,8 @@ public class MainActivity extends CommonActivity {
                     startActivity(goToTopico);
                 }
                 else if (id == R.id.action_logout){
+                    editor.clear();
+                    editor.commit();
                     firebaseAuth.signOut();
                 }
                 else if (id == R.id.action_meuPerfil) {
@@ -136,12 +140,34 @@ public class MainActivity extends CommonActivity {
     }
 
     public void configNavigationView(){
-       FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-       View header =  navigationView.getHeaderView(0);
-       final CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);TextView name = (TextView) header.findViewById(R.id.nav_name_label);
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        View header =  navigationView.getHeaderView(0);
+        final CircleImageView profileImage = (CircleImageView) header.findViewById(R.id.nav_image_profile);
+        final TextView name = (TextView) header.findViewById(R.id.nav_name_label);
         TextView email = (TextView) header.findViewById(R.id.nav_email_label);
 
         if (user != null){
+            if (user.getUid() != null) {
+                DatabaseReference refUser = FirebaseDatabase.getInstance().getReference("users");
+                refUser.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User currentUser = dataSnapshot.getValue(User.class);
+
+                        editor.putString("name", currentUser.getName());
+                        editor.commit();
+
+                        name.setText(pref.getString("name", null));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            email.setText(user.getEmail());
+
             StorageReference ref = FirebaseStorage.getInstance().getReference();
             ref.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
@@ -150,12 +176,6 @@ public class MainActivity extends CommonActivity {
                     Picasso.with(MainActivity.this).load(uri).placeholder(getResources().getDrawable(R.mipmap.ic_launcher_round)).into(profileImage);
                 }
             });
-            for (UserInfo userInfo : user.getProviderData()) {
-                if (userInfo.getDisplayName() != null) {
-                    name.setText(userInfo.getDisplayName());
-                }
-            }
-            email.setText(user.getEmail());
         }
 
     }
@@ -174,6 +194,8 @@ public class MainActivity extends CommonActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
+            editor.clear();
+            editor.commit();
             FirebaseAuth.getInstance().signOut();
             finish();
         }
