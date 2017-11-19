@@ -1,5 +1,6 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -48,6 +49,7 @@ public class TopicMessageActivity extends CommonActivity
     private RecyclerView mRecyclerView;
     private LinearLayout mMessageContainer;
     private TextView mDefaultMsg;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class TopicMessageActivity extends CommonActivity
         }
 
         initViews();
+        createProgressDialog();
         boolean isSameUid = topic.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         if(!isUserProfessor() || !isSameUid){
@@ -66,6 +69,8 @@ public class TopicMessageActivity extends CommonActivity
         }else{
             mMessageContainer.setVisibility(View.VISIBLE);
         }
+
+        showProgressDialog("Carregando");
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         final FirebaseRecyclerAdapter<Message, MyOtherHolder> holder =  new FirebaseRecyclerAdapter<Message, MyOtherHolder>(Message.class, R.layout.cell_topic_messages,
@@ -78,6 +83,7 @@ public class TopicMessageActivity extends CommonActivity
                 viewHolder.txt_date.setText(model.getDate());
             }
         };
+
         final LinearLayoutManager manager = new LinearLayoutManager(this);
 
         holder.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -95,6 +101,8 @@ public class TopicMessageActivity extends CommonActivity
             }
         });
 
+        dismissProgressDialog();
+
         mRecyclerView.setAdapter(holder);
 
         mRecyclerView.setLayoutManager(manager);
@@ -105,11 +113,13 @@ public class TopicMessageActivity extends CommonActivity
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showProgressDialog("Enviando");
                 initObject();
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("topicos_mensagem");
                 String key = ref.push().getKey();
                 ref.child(topic.getIdTopic()).child(key).setValue(message);
                 mMsgBox.setText("");
+                dismissProgressDialog();
             }
         });
     }
@@ -165,6 +175,27 @@ public class TopicMessageActivity extends CommonActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void createProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+    }
+
+    private void showProgressDialog (String text){
+        progressDialog.setMessage(text);
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog (){
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dismissProgressDialog();
+    }
 
     public static class MyOtherHolder extends RecyclerView.ViewHolder{
         TextView txt_msg;

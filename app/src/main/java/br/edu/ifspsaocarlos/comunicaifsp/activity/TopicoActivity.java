@@ -69,8 +69,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
 
         initViews();
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
+        createProgressDialog();
 
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
@@ -87,15 +86,14 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
             @Override
             public void onClick(View v) {
                 if(!flagMigue){
-                    progressDialog.setMessage("Buscando");
-                    progressDialog.show();
+                    showProgressDialog("Buscando");
                     final Boolean[] existeTopico = {false};
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     adapterMigue = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
                             MyViewHolder.class, databaseReference.child("generalTopic").orderByChild("name").equalTo(mSearch.getText().toString())) {
                         @Override
                         protected void populateViewHolder(MyViewHolder viewHolder, Topic model, int position) {
-                            progressDialog.dismiss();
+                            dismissProgressDialog();
                             existeTopico[0] = true;
                             mDefaultMsg.setVisibility(View.GONE);
                             final Topic modelFinal = model;
@@ -136,7 +134,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                         }
                     };
                     if(!existeTopico[0]){
-                        progressDialog.dismiss();
+                        dismissProgressDialog();
                         mDefaultMsg.setVisibility(View.VISIBLE);
                         mDefaultMsg.setText("Nenhum tópico foi encontrado!");
                     }
@@ -169,8 +167,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                     startActivity(goToTopico);
                 }
                 else if (id == R.id.action_logout){
-                    progressDialog.setMessage("Saindo");
-                    progressDialog.show();
+                    showProgressDialog("Saindo");
                     editor.clear();
                     editor.commit();
                     FirebaseAuth.getInstance().signOut();
@@ -192,14 +189,15 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
 //
 //        TopicoAdapter adapter = new TopicoAdapter(list);
 
+
+        showProgressDialog("Carregando");
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        emptyList(FirebaseAuth.getInstance().getCurrentUser());
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
                 MyViewHolder.class, databaseReference.child("generalTopic")) {
             @Override
             protected void populateViewHolder(MyViewHolder viewHolder, final Topic model, int position) {
                 mDefaultMsg.setVisibility(View.GONE);
-                progressDialog.dismiss();
                 final Topic modelFinal = model;
                 viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
                 viewHolder.txt_msg.setText(model.getDescription());
@@ -207,6 +205,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                     @Override
                     public void onClick(View v) {
                         //Pode usar o modelFinal aqui
+                        dismissProgressDialog();
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
                         ref.orderByChild(modelFinal.getIdTopic()).equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -235,8 +234,11 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                         });
                     }
                 });
+                dismissProgressDialog();
             }
         };
+
+        dismissProgressDialog();
 
         rV.setAdapter(firebaseRecyclerAdapter);
         rV.setLayoutManager(new LinearLayoutManager(this));
@@ -254,54 +256,26 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         });
     }
 
-    private void emptyList(FirebaseUser user){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("generalTopic");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null)
-                    if(progressDialog != null && progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    private void createProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
     }
 
-    private void emptyListSearch(FirebaseUser user){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("generalTopic");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null)
-                    if(progressDialog != null && progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        progressDialog.setMessage("Carregando");
+    private void showProgressDialog (String text){
+        progressDialog.setMessage(text);
         progressDialog.show();
+    }
+
+    private void dismissProgressDialog (){
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+        dismissProgressDialog();
     }
 
     @Override
@@ -309,8 +283,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            progressDialog.setMessage("Saindo");
-            progressDialog.show();
+            showProgressDialog("Saindo");
             editor.clear();
             editor.commit();
             FirebaseAuth.getInstance().signOut();
@@ -370,10 +343,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
 
     @Override
     public void showMessageToast(String message) {
-        Toast.makeText(this,
-                message,
-                Toast.LENGTH_LONG)
-                .show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override

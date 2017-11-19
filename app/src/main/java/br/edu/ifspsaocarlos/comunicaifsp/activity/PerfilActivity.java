@@ -68,9 +68,8 @@ public class PerfilActivity extends AppCompatActivity {
 
         initViews();
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Atualizando");
+        createProgressDialog();
+        showProgressDialog("Carregando");
 
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
@@ -87,6 +86,8 @@ public class PerfilActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Editar Perfil");
+
+        dismissProgressDialog();
 
         setupButtonPerfil();
     }
@@ -111,8 +112,6 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -188,12 +187,10 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-
     private void callCamera(){
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, 101);
     }
-
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -261,18 +258,19 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void updateProfile(){
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg");
-        progressDialog.show();
+
+        showProgressDialog("Atualizando");
+
         if(capturedUri != null){
             UploadTask task = ref.putFile(capturedUri);
             task.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.d("TESTESS",e.getMessage());
-                    progressDialog.dismiss();
+                    dismissProgressDialog();
                 }
             });
         }
-
 
         DatabaseReference refMigue = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         if (mPerfilEmail.getText().length() != 0){
@@ -291,10 +289,25 @@ public class PerfilActivity extends AppCompatActivity {
         finish();
     }
 
+    private void createProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+    }
+
+    private void showProgressDialog (String text){
+        progressDialog.setMessage(text);
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog (){
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+        dismissProgressDialog();
     }
 }

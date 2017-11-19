@@ -56,8 +56,9 @@ public class MainActivity extends CommonActivity {
 
         initViews();
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
+        createProgressDialog();
+
+        showProgressDialog("Carregando");
 
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
@@ -75,8 +76,7 @@ public class MainActivity extends CommonActivity {
                     startActivity(goToTopico);
                 }
                 else if (id == R.id.action_logout){
-                    progressDialog.setMessage("Saindo");
-                    progressDialog.show();
+                    showProgressDialog("Saindo");
                     editor.clear();
                     editor.commit();
                     firebaseAuth.signOut();
@@ -124,16 +124,15 @@ public class MainActivity extends CommonActivity {
 
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             getUserFlag();
-            emptyList(user);
             mRecycler.setAdapter(new FirebaseRecyclerAdapter<Topic, TopicoActivity.MyViewHolder>(Topic.class, R.layout.cell_topico,
                     TopicoActivity.MyViewHolder.class, databaseReference.child("usuario_topico").child(user.getUid())) {
                 @Override
-                protected void populateViewHolder(TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
-                    progressDialog.dismiss();
-                    mDefaultMsg.setVisibility(View.GONE);
+                protected void populateViewHolder(final TopicoActivity.MyViewHolder viewHolder, Topic model, int position) {
                     final Topic modelFinal = model;
+                    final String[] creatorName = {""};
+                    mDefaultMsg.setVisibility(View.GONE);
                     viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase() + "] " + model.getName());
                     viewHolder.txt_msg.setText(model.getDescription());
                     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -147,9 +146,7 @@ public class MainActivity extends CommonActivity {
                 }
             });
             mRecycler.setLayoutManager(new LinearLayoutManager(this));
-            if(progressDialog != null && progressDialog.isShowing()){
-                progressDialog.dismiss();
-            }
+            dismissProgressDialog();
         }
     }
 
@@ -195,22 +192,20 @@ public class MainActivity extends CommonActivity {
 
     }
 
-    private void emptyList(FirebaseUser user){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico");
-        ref.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null)
-                    if(progressDialog != null && progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
-            }
+    private void createProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    private void showProgressDialog (String text){
+        progressDialog.setMessage(text);
+        progressDialog.show();
+    }
 
-            }
-        });
+    private void dismissProgressDialog (){
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
@@ -223,18 +218,9 @@ public class MainActivity extends CommonActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        progressDialog.setMessage("Carregando");
-        progressDialog.show();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
-        if (progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+        dismissProgressDialog();
     }
 
     @Override

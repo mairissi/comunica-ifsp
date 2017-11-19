@@ -28,7 +28,6 @@ import br.edu.ifspsaocarlos.comunicaifsp.Validator;
 public class ResetActivity extends CommonActivity implements View.OnClickListener{
 
     private AutoCompleteTextView email;
-    private FirebaseAuth mAuth;
     private Button btnReset;
     ProgressDialog progressDialog;
 
@@ -39,11 +38,9 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Enviando");
 
         initViews();
 
-        mAuth = FirebaseAuth.getInstance();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Resetar Senha");
 
@@ -66,6 +63,8 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
         final FirebaseAuth auth = FirebaseAuth.getInstance();
         Boolean noError = true;
 
+        progressDialog.setMessage("Enviando");
+
         Boolean validateEmail = Validator.validateEmail(email.getText().toString());
 
         if (!validateEmail) {
@@ -82,6 +81,7 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
+                        progressDialog.dismiss();
                         showToast("Password resetado com sucesso!");
                         Intent intent = new Intent(ResetActivity.this, MainActivity.class);
                         startActivity(intent);
@@ -132,8 +132,8 @@ public class ResetActivity extends CommonActivity implements View.OnClickListene
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent goToMain = new Intent(ResetActivity.this, LoginActivity.class);
-                startActivity(goToMain);
+                Intent goToLogin = new Intent(ResetActivity.this, LoginActivity.class);
+                startActivity(goToLogin);
                 finish();
         }
 

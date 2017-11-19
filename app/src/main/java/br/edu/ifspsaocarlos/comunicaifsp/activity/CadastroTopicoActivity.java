@@ -1,5 +1,6 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
@@ -24,14 +25,14 @@ import br.edu.ifspsaocarlos.comunicaifsp.Topic;
 public class CadastroTopicoActivity extends CommonActivity
         implements DatabaseReference.CompletionListener, View.OnClickListener{
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Topic topic;
     private AutoCompleteTextView name;
     private AutoCompleteTextView description;
     private AutoCompleteTextView course;
 
     private Button btnCadastrarTopico;
+
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class CadastroTopicoActivity extends CommonActivity
         btnCadastrarTopico = (Button) findViewById(R.id.btn_CadastrarTopico );
 
         initViews();
+
+        createProgressDialog();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Novo Tópico");
@@ -98,9 +101,32 @@ public class CadastroTopicoActivity extends CommonActivity
         if (noError) {
             btnCadastrarTopico.setEnabled(false);
             topic.setIdTopic(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            showProgressDialog("Criando");
             topic.saveDB(CadastroTopicoActivity.this);
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dismissProgressDialog();
+    }
+
+    private void createProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+    }
+
+    private void showProgressDialog (String text){
+        progressDialog.setMessage(text);
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog (){
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
@@ -42,7 +43,7 @@ public class SignInTopicActivity extends CommonActivity
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Carregando");
+        progressDialog.setMessage("Cadastrando");
 
         signUserInTopicBtn.setOnClickListener(this);
 
@@ -72,6 +73,8 @@ public class SignInTopicActivity extends CommonActivity
                 reference.child("topico_e_usuario").child(topic.getIdTopic()).child(userId).setValue(topic);
                 reference.child("usuario_topico_id").child(userId).child(topic.getIdTopic()).setValue(topic.getIdTopic());
 
+                FirebaseMessaging.getInstance().subscribeToTopic("/topics/" + topic.getIdTopic());
+                progressDialog.dismiss();
                 //Redirecionar para a tela de mensagens
                 Intent intent = new Intent(SignInTopicActivity.this, TopicMessageActivity.class);
                 intent.putExtra("topic", topic);
