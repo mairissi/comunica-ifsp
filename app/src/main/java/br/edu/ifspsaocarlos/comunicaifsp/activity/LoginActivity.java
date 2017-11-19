@@ -179,7 +179,9 @@ public class LoginActivity extends CommonActivity implements View.OnClickListene
                                 callMainActivity();
                             }
                             else {
-                                showToast("Por favor confirmar seu cadastro acessando seu e-mail.");
+                                showToast("Foi enviado um novo e-mail para confirmar o seu cadastro.");
+                                firebaseUser.sendEmailVerification();
+
                                 btnLogin.setEnabled(true);
                                 register.setEnabled(true);
                                 reset.setEnabled(true);

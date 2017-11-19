@@ -21,9 +21,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,9 +45,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
-import br.edu.ifspsaocarlos.comunicaifsp.Manifest;
+import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.User;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
@@ -48,7 +55,7 @@ import static android.os.Environment.DIRECTORY_PICTURES;
  * Created by eu.nicekuba on 18/10/2017.
  */
 
-public class PerfilActivity extends AppCompatActivity {
+public class PerfilActivity extends CommonActivity {
 
     private CircleImageView mPerfilImage;
     private EditText mPerfilName;
@@ -98,6 +105,16 @@ public class PerfilActivity extends AppCompatActivity {
         mPerfilEmail = (EditText) findViewById(R.id.perfil_email);
         mPerfilPassword = (EditText) findViewById(R.id.perfil_password);
         mButton = (Button) findViewById(R.id.perfil_button);
+    }
+
+    @Override
+    protected void initObject() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 
     private void setupButtonPerfil(){
@@ -259,8 +276,6 @@ public class PerfilActivity extends AppCompatActivity {
     private void updateProfile(){
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/photo1.jpg");
 
-        showProgressDialog("Atualizando");
-
         if(capturedUri != null){
             UploadTask task = ref.putFile(capturedUri);
             task.addOnFailureListener(new OnFailureListener() {
@@ -272,18 +287,66 @@ public class PerfilActivity extends AppCompatActivity {
             });
         }
 
-        DatabaseReference refMigue = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        showProgressDialog("Atualizando");
+        Boolean isUpdatingEmail = false;
+
+        final DatabaseReference refMigue = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         if (mPerfilEmail.getText().length() != 0){
-            refMigue.child("email").setValue(mPerfilEmail.getText().toString());
+            isUpdatingEmail = true;
+
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            user.updateEmail(mPerfilEmail.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                if (!user.isEmailVerified()){
+                                    user.sendEmailVerification();
+                                    Toast.makeText(PerfilActivity.this, "Por favor, verifique seu e-mail.", Toast.LENGTH_LONG).show();
+                                }
+                                //Log.d(TAG, "User email address updated.");
+                                //refMigue.child("password").setValue(mPerfilPassword.getText().toString());
+                                dismissProgressDialog();
+                                updateNameAndPassword(refMigue);
+                                showToast("Ao atualizar o e-mail é necessário refazer o login!");
+                                FirebaseAuth.getInstance().signOut();
+                            }
+                            else{
+                                if (task.getException() instanceof FirebaseNetworkException){
+                                    showToast("Você precisa estar conectado a internet!");
+                                }
+                                else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException){
+                                    if (((FirebaseAuthInvalidCredentialsException) task.getException()).getErrorCode().equals("ERROR_INVALID_EMAIL")){
+                                        showToast("O endereço de e-mail está inválido!");
+                                    }
+                                }
+                                else if (task.getException() instanceof FirebaseAuthUserCollisionException){
+                                    showToast("Esse endereço de e-mail já foi cadastrado!");
+                                }
+                                else if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException){
+                                    showToast("Refaça o login no sistema e tente atualizar novamente!");
+                                }
+                                else showToast("Não foi possível atualizar o perfil!");
+                                dismissProgressDialog();
+                            }
+                        }
+                    });
         }
-        if (mPerfilPassword.getText().length() != 0){
+        if(!isUpdatingEmail){
+            updateNameAndPassword(refMigue);
+        }
+    }
+
+    private void updateNameAndPassword(DatabaseReference refMigue){
+        if (mPerfilPassword.getText().length() != 0) {
             refMigue.child("password").setValue(mPerfilPassword.getText().toString());
         }
-        if (mPerfilName.getText().length() != 0){
+        if (mPerfilName.getText().length() != 0) {
             refMigue.child("name").setValue(mPerfilName.getText().toString());
         }
 
-        Toast.makeText(this, "Perfil atualizado com sucesso !", Toast.LENGTH_LONG).show();
+        showToast("Perfil atualizado com sucesso !");
         Intent intent = new Intent(PerfilActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
