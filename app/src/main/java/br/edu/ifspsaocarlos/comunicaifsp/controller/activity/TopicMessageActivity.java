@@ -27,8 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Message;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Message;
 import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
 
 /**
@@ -61,12 +61,14 @@ public class TopicMessageActivity extends CommonActivity
 
         initViews();
         createProgressDialog();
-        boolean isSameUid = topic.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        if (topic != null) {
+            boolean isSameUid = topic.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        if(!isUserProfessor() || !isSameUid){
-            mMessageContainer.setVisibility(View.GONE);
-        }else{
-            mMessageContainer.setVisibility(View.VISIBLE);
+            if (!isUserProfessor() || !isSameUid) {
+                mMessageContainer.setVisibility(View.GONE);
+            } else {
+                mMessageContainer.setVisibility(View.VISIBLE);
+            }
         }
 
         showProgressDialog("Carregando");
