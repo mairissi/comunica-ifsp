@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +44,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 

@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp;
+package br.edu.ifspsaocarlos.comunicaifsp.util;
 
 /**
  * Created by MRissi on 13-Sep-17.

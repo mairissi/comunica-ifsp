@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,10 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
-import br.edu.ifspsaocarlos.comunicaifsp.Message;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Message;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
 
 /**
  * Created by MRissi on 25-Oct-17.

@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
@@ -17,11 +17,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
-import br.edu.ifspsaocarlos.comunicaifsp.Mask;
+
+import br.edu.ifspsaocarlos.comunicaifsp.util.Mask;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.User;
-import br.edu.ifspsaocarlos.comunicaifsp.Validator;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
+import br.edu.ifspsaocarlos.comunicaifsp.util.Validator;
 
 public class CadastroActivity extends CommonActivity implements View.OnClickListener {
 

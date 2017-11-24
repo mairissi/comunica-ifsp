@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/message_container"
-    tools:context="br.edu.ifspsaocarlos.comunicaifsp.activity.TopicMessageActivity"
+    tools:context=".controller.activity.TopicMessageActivity"
     android:focusableInTouchMode="true">
 
     <RelativeLayout

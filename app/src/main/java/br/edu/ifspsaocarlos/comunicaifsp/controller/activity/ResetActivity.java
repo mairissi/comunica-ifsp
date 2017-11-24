@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -17,9 +17,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.Validator;
+import br.edu.ifspsaocarlos.comunicaifsp.util.Validator;
 
 /**
  * Created by MRissi on 08-Nov-17.

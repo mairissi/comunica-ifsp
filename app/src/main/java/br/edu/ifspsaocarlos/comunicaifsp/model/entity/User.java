@@ -1,16 +1,10 @@
-package br.edu.ifspsaocarlos.comunicaifsp;
-
-import android.content.SharedPreferences;
+package br.edu.ifspsaocarlos.comunicaifsp.model.entity;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by MRissi on 13-Sep-17.

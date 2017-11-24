@@ -1,11 +1,9 @@
-package br.edu.ifspsaocarlos.comunicaifsp.firebaseServices;
+package br.edu.ifspsaocarlos.comunicaifsp.model.firebaseServices;
 
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by MRissi on 07-Nov-17.

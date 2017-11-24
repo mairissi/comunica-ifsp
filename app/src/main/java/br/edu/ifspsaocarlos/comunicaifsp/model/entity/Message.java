@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp;
+package br.edu.ifspsaocarlos.comunicaifsp.model.entity;
 
 import java.io.Serializable;
 

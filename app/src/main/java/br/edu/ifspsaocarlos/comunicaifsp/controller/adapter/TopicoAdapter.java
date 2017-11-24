@@ -1,6 +1,5 @@
-package br.edu.ifspsaocarlos.comunicaifsp;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.adapter;
 
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import br.edu.ifspsaocarlos.comunicaifsp.R;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
 
 /**
  * Created by MRissi on 15-Sep-17.

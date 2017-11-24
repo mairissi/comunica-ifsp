@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,11 +14,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
 
 /**
  * Created by MRissi on 15-Sep-17.

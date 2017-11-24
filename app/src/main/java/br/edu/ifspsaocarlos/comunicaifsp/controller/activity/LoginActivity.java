@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,9 +19,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.User;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
 
 public class LoginActivity extends CommonActivity implements View.OnClickListener {
 

@@ -16,33 +16,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".controller.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoginActivity">
+        <activity android:name=".controller.activity.LoginActivity">
             android:windowSoftInputMode="stateVisible|adjustResize"
         </activity>
-        <activity android:name=".activity.CadastroActivity">
+        <activity android:name=".controller.activity.CadastroActivity">
             android:windowSoftInputMode="stateVisible|adjustResize"
         </activity>
-        <activity android:name=".activity.TopicoActivity">
+        <activity android:name=".controller.activity.TopicoActivity">
         </activity>
-        <activity android:name=".activity.CadastroTopicoActivity"/>
-        <activity android:name=".activity.SignInTopicActivity"/>
-        <activity android:name=".activity.PerfilActivity"/>
-        <activity android:name=".activity.TopicMessageActivity"/>
-        <activity android:name=".activity.ResetActivity"/>
+        <activity android:name=".controller.activity.CadastroTopicoActivity"/>
+        <activity android:name=".controller.activity.SignInTopicActivity"/>
+        <activity android:name=".controller.activity.PerfilActivity"/>
+        <activity android:name=".controller.activity.TopicMessageActivity"/>
+        <activity android:name=".controller.activity.ResetActivity"/>
         <service
-            android:name=".firebaseServices.MyFirebaseInstanceIdService">
+            android:name=".model.firebaseServices.MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
         <service
-            android:name=".firebaseServices.MyFirebaseMessagingService">
+            android:name=".model.firebaseServices.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

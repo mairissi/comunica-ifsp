@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp;
+package br.edu.ifspsaocarlos.comunicaifsp.model.entity;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.view;
+package br.edu.ifspsaocarlos.comunicaifsp.model.callback;
 
 /**
  * Created by MRissi on 03-Oct-17.

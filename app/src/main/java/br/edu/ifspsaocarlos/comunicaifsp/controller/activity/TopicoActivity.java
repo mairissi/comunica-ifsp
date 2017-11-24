@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -35,11 +35,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.Topic;
-import br.edu.ifspsaocarlos.comunicaifsp.User;
-import br.edu.ifspsaocarlos.comunicaifsp.view.TopicPresenter;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
+import br.edu.ifspsaocarlos.comunicaifsp.model.callback.TopicPresenter;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**

@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.activity;
+package br.edu.ifspsaocarlos.comunicaifsp.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -29,11 +29,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import br.edu.ifspsaocarlos.comunicaifsp.CommonActivity;
-import br.edu.ifspsaocarlos.comunicaifsp.LibraryClass;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.LibraryClass;
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.Topic;
-import br.edu.ifspsaocarlos.comunicaifsp.User;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends CommonActivity {

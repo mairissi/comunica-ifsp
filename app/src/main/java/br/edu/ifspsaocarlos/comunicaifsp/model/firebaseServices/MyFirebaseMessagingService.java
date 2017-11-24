@@ -1,4 +1,4 @@
-package br.edu.ifspsaocarlos.comunicaifsp.firebaseServices;
+package br.edu.ifspsaocarlos.comunicaifsp.model.firebaseServices;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,9 +14,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.activity.MainActivity;
-
-import static android.content.ContentValues.TAG;
+import br.edu.ifspsaocarlos.comunicaifsp.controller.activity.MainActivity;
 
 /**
  * Created by MRissi on 07-Nov-17.

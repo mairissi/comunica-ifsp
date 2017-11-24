@@ -1,13 +1,12 @@
-package br.edu.ifspsaocarlos.comunicaifsp;
+package br.edu.ifspsaocarlos.comunicaifsp.model.entity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 import java.util.Map;
 
-import br.edu.ifspsaocarlos.comunicaifsp.view.TopicPresenter;
+import br.edu.ifspsaocarlos.comunicaifsp.model.callback.TopicPresenter;
 
 /**
  * Created by MRissi on 26-Sep-17.
