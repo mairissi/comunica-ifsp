@@ -13,8 +13,11 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 import br.edu.ifspsaocarlos.comunicaifsp.R;
-import br.edu.ifspsaocarlos.comunicaifsp.controller.activity.MainActivity;
+import br.edu.ifspsaocarlos.comunicaifsp.controller.activity.TopicoActivity;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
 
 /**
  * Created by MRissi on 07-Nov-17.
@@ -34,12 +37,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            sendNotification(remoteMessage.getData());
         }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            //Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle());
+            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -47,8 +50,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    private void sendNotification(String messageBody, String messageTitle) {
-        Intent intent = new Intent(this, MainActivity.class);
+    private void sendNotification(Map<String, String> data) {
+        String messageTitle = "";
+        String messageBody = "";
+        String messageId = "";
+        final Topic[] topic = new Topic[1];
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            System.out.println(entry.getKey() + "=" + entry.getValue());
+            if (entry.getKey().equals("title")) {
+                messageTitle = entry.getValue();
+            }
+            if (entry.getKey().equals("body")) {
+                messageBody = entry.getValue();
+            }
+            if (entry.getKey().equals("id")) {
+                messageId = entry.getValue();
+            }
+        }
+
+        final Intent intent = new Intent(this, TopicoActivity.class);
+        intent.putExtra("topicId", messageId);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);

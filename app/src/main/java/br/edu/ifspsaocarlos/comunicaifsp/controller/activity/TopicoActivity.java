@@ -57,6 +57,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
     FirebaseRecyclerAdapter<Topic, MyViewHolder> adapterMigue;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+    Topic topic;
 
     private FloatingActionButton btnNovoTopico;
     ProgressDialog progressDialog;
@@ -66,199 +67,218 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topico);
 
-        initViews();
-
         createProgressDialog();
 
-        pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-        editor = pref.edit();
+        //Se vier pelo click da push notification, vai ter extra
+        if (getIntent().getExtras() != null){
+            String topicId = (String) getIntent().getExtras().get("topicId");
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.child("generalTopic").child(topicId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    topic = dataSnapshot.getValue(Topic.class);
+                    Intent intent = new Intent(TopicoActivity.this, TopicMessageActivity.class);
+                    intent.putExtra("topic", topic);
+                    startActivity(intent);
+                    finish();
+                }
 
-        configNavigationView();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-        if(!isUserProfessor()){
-            btnNovoTopico.setVisibility(View.GONE);
-        }else{
-            btnNovoTopico.setVisibility(View.VISIBLE);
-        }
+                }
+            });
+        } else {
 
-        mSearchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!flagMigue){
-                    showProgressDialog("Buscando");
-                    final Boolean[] existeTopico = {false};
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                    adapterMigue = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
-                            MyViewHolder.class, databaseReference.child("generalTopic").orderByChild("name").equalTo(mSearch.getText().toString())) {
-                        @Override
-                        protected void populateViewHolder(MyViewHolder viewHolder, Topic model, int position) {
+            initViews();
+
+            pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+            editor = pref.edit();
+
+            configNavigationView();
+
+            if (!isUserProfessor()) {
+                btnNovoTopico.setVisibility(View.GONE);
+            } else {
+                btnNovoTopico.setVisibility(View.VISIBLE);
+            }
+
+            mSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!flagMigue) {
+                        showProgressDialog("Buscando");
+                        final Boolean[] existeTopico = {false};
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                        adapterMigue = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
+                                MyViewHolder.class, databaseReference.child("generalTopic").orderByChild("name").equalTo(mSearch.getText().toString())) {
+                            @Override
+                            protected void populateViewHolder(MyViewHolder viewHolder, Topic model, int position) {
+                                dismissProgressDialog();
+                                existeTopico[0] = true;
+                                mDefaultMsg.setVisibility(View.GONE);
+                                final Topic modelFinal = model;
+                                viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase() + "] " + model.getName());
+                                viewHolder.txt_msg.setText(model.getDescription());
+                                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //Pode usar o modelFinal aqui
+                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
+                                        ref.orderByChild(modelFinal.getIdTopic()).equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                boolean flag = false;
+                                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                    HashMap<String, String> map = (HashMap<String, String>) snapshot.getValue();
+                                                    flag = map.containsValue(modelFinal.getIdTopic());
+                                                }
+
+                                                if (flag && ((HashMap<String, Object>) dataSnapshot.getValue()).containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                                    Intent intent = new Intent(TopicoActivity.this, TopicMessageActivity.class);
+                                                    intent.putExtra("topic", modelFinal);
+                                                    startActivity(intent);
+                                                } else {
+                                                    Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
+                                                    intent.putExtra("topic", modelFinal);
+                                                    startActivity(intent);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        };
+                        if (!existeTopico[0]) {
                             dismissProgressDialog();
-                            existeTopico[0] = true;
-                            mDefaultMsg.setVisibility(View.GONE);
-                            final Topic modelFinal = model;
-                            viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
-                            viewHolder.txt_msg.setText(model.getDescription());
-                            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            mDefaultMsg.setVisibility(View.VISIBLE);
+                            mDefaultMsg.setText("Nenhum tópico foi encontrado!");
+                        }
+                        //Troca a imagem para X após clicar para buscar
+                        mSearchBtn.setImageResource(R.drawable.ic_clear);
+                        rV.setAdapter(adapterMigue);
+                        flagMigue = true;
+                    } else {
+                        //Volta o ícone para a seta para realizar nova busca
+                        mSearchBtn.setImageResource(R.drawable.ic_action_go);
+                        mSearch.setText("");
+                        flagMigue = false;
+                        rV.setAdapter(firebaseRecyclerAdapter);
+                    }
+                }
+            });
+
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                    int id = item.getItemId();
+
+                    if (id == R.id.action_home) {
+                        Intent goToMain = new Intent(TopicoActivity.this, MainActivity.class);
+                        startActivity(goToMain);
+                    } else if (id == R.id.action_meuPerfil) {
+                        Intent goToTopico = new Intent(TopicoActivity.this, PerfilActivity.class);
+                        startActivity(goToTopico);
+                    } else if (id == R.id.action_logout) {
+                        showProgressDialog("Saindo");
+                        editor.clear();
+                        editor.commit();
+                        FirebaseAuth.getInstance().signOut();
+                        finish();
+                    } else if (id == R.id.action_meusTopicos) {
+                        container.closeDrawer(GravityCompat.START);
+                    }
+
+                    return false;
+                }
+            });
+
+            //        ArrayList<Topic> list = new ArrayList<>();
+            //        Topic celula = new Topic(this);
+            //        celula.setName("2017-2-PRJT6-648");
+            //        celula.setDescription("ADS - Disciplina de PRJ");
+            //        list.add(celula);
+            //
+            //        TopicoAdapter adapter = new TopicoAdapter(list);
+
+
+            showProgressDialog("Carregando");
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
+                    MyViewHolder.class, databaseReference.child("generalTopic")) {
+                @Override
+                protected void populateViewHolder(MyViewHolder viewHolder, final Topic model, int position) {
+                    mDefaultMsg.setVisibility(View.GONE);
+                    final Topic modelFinal = model;
+                    viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase() + "] " + model.getName());
+                    viewHolder.txt_msg.setText(model.getDescription());
+                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //Pode usar o modelFinal aqui
+                            dismissProgressDialog();
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
+                            ref.orderByChild(modelFinal.getIdTopic()).equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onClick(View v) {
-                                    //Pode usar o modelFinal aqui
-                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
-                                    ref.orderByChild(modelFinal.getIdTopic()).equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            boolean flag = false;
-                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                                HashMap<String, String> map = (HashMap<String, String>) snapshot.getValue();
-                                                flag =  map.containsValue(modelFinal.getIdTopic());
-                                            }
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    boolean flag = false;
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        HashMap<String, String> map = (HashMap<String, String>) snapshot.getValue();
+                                        flag = map.containsValue(modelFinal.getIdTopic());
+                                    }
 
-                                            if(flag && ((HashMap<String, Object>) dataSnapshot.getValue()).containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                                Intent intent = new Intent(TopicoActivity.this, TopicMessageActivity.class);
-                                                intent.putExtra("topic", modelFinal);
-                                                startActivity(intent);
-                                            }else{
-                                                Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
-                                                intent.putExtra("topic", modelFinal);
-                                                startActivity(intent);
-                                            }
-                                        }
+                                    if (flag && ((HashMap<String, Object>) dataSnapshot.getValue()).containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                        Intent intent = new Intent(TopicoActivity.this, TopicMessageActivity.class);
+                                        intent.putExtra("topic", modelFinal);
+                                        startActivity(intent);
+                                    } else {
+                                        Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
+                                        intent.putExtra("topic", modelFinal);
+                                        startActivity(intent);
+                                    }
+                                }
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                                        }
-                                    });
                                 }
                             });
                         }
-                    };
-                    if(!existeTopico[0]){
-                        dismissProgressDialog();
-                        mDefaultMsg.setVisibility(View.VISIBLE);
-                        mDefaultMsg.setText("Nenhum tópico foi encontrado!");
-                    }
-                    //Troca a imagem para X após clicar para buscar
-                    mSearchBtn.setImageResource(R.drawable.ic_clear);
-                    rV.setAdapter(adapterMigue);
-                    flagMigue = true;
-                }else{
-                    //Volta o ícone para a seta para realizar nova busca
-                    mSearchBtn.setImageResource(R.drawable.ic_action_go);
-                    mSearch.setText("");
-                    flagMigue = false;
-                    rV.setAdapter(firebaseRecyclerAdapter);
+                    });
+                    dismissProgressDialog();
                 }
-            }
-        });
+            };
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            dismissProgressDialog();
 
-                int id = item.getItemId();
+            rV.setAdapter(firebaseRecyclerAdapter);
 
-                if (id == R.id.action_home) {
-                    Intent goToMain = new Intent(TopicoActivity.this, MainActivity.class);
-                    startActivity(goToMain);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+            mLayoutManager.setReverseLayout(true);
+            mLayoutManager.setStackFromEnd(true);
+
+            rV.setLayoutManager(mLayoutManager);
+            //rV.setLayoutManager(new LinearLayoutManager(this));
+
+            getSupportActionBar().setTitle("Tópicos");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+
+            btnNovoTopico.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(TopicoActivity.this, CadastroTopicoActivity.class);
+                    startActivity(intent);
                 }
-                else if (id == R.id.action_meuPerfil) {
-                    Intent goToTopico = new Intent(TopicoActivity.this, PerfilActivity.class);
-                    startActivity(goToTopico);
-                }
-                else if (id == R.id.action_logout){
-                    showProgressDialog("Saindo");
-                    editor.clear();
-                    editor.commit();
-                    FirebaseAuth.getInstance().signOut();
-                    finish();
-                }
-                else if (id == R.id.action_meusTopicos){
-                    container.closeDrawer(GravityCompat.START);
-                }
-
-                return false;
-            }
-        });
-
-//        ArrayList<Topic> list = new ArrayList<>();
-//        Topic celula = new Topic(this);
-//        celula.setName("2017-2-PRJT6-648");
-//        celula.setDescription("ADS - Disciplina de PRJ");
-//        list.add(celula);
-//
-//        TopicoAdapter adapter = new TopicoAdapter(list);
-
-
-        showProgressDialog("Carregando");
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Topic, MyViewHolder>(Topic.class, R.layout.cell_topico,
-                MyViewHolder.class, databaseReference.child("generalTopic")) {
-            @Override
-            protected void populateViewHolder(MyViewHolder viewHolder, final Topic model, int position) {
-                mDefaultMsg.setVisibility(View.GONE);
-                final Topic modelFinal = model;
-                viewHolder.txt_name.setText("[" + model.getCourse().toUpperCase()+ "] " + model.getName());
-                viewHolder.txt_msg.setText(model.getDescription());
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Pode usar o modelFinal aqui
-                        dismissProgressDialog();
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("usuario_topico_id");
-                        ref.orderByChild(modelFinal.getIdTopic()).equalTo(modelFinal.getIdTopic()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                boolean flag = false;
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                       HashMap<String, String> map = (HashMap<String, String>) snapshot.getValue();
-                                       flag =  map.containsValue(modelFinal.getIdTopic());
-                                }
-
-                                if(flag && ((HashMap<String, Object>) dataSnapshot.getValue()).containsKey(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                    Intent intent = new Intent(TopicoActivity.this, TopicMessageActivity.class);
-                                    intent.putExtra("topic", modelFinal);
-                                    startActivity(intent);
-                                }else{
-                                    Intent intent = new Intent(TopicoActivity.this, SignInTopicActivity.class);
-                                    intent.putExtra("topic", modelFinal);
-                                    startActivity(intent);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                });
-                dismissProgressDialog();
-            }
-        };
-
-        dismissProgressDialog();
-
-        rV.setAdapter(firebaseRecyclerAdapter);
-
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setReverseLayout(true);
-        mLayoutManager.setStackFromEnd(true);
-
-        rV.setLayoutManager(mLayoutManager);
-        //rV.setLayoutManager(new LinearLayoutManager(this));
-
-        getSupportActionBar().setTitle("Tópicos");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        btnNovoTopico.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TopicoActivity.this , CadastroTopicoActivity.class);
-                startActivity(intent);
-            }
-        });
+            });
+        }
     }
 
     private void createProgressDialog(){

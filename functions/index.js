@@ -17,11 +17,11 @@ exports.pushNotification = functions.database.ref('/topicos_mensagem/{idTopic}/{
 
   // Create a notification
     const payload = {
-        notification: {
-            title: valueObject.title,
-            body: valueObject.message,
-            sound: "default"
-        },
+		data : {
+			title : valueObject.title,
+			body : valueObject.message,
+			id : event.params.idTopic
+		},
     };
 
   //Create an options object that contains the time to live for the notification and the priority
@@ -31,5 +31,10 @@ exports.pushNotification = functions.database.ref('/topicos_mensagem/{idTopic}/{
     };
 
 
-    return admin.messaging().sendToTopic(topic, payload, options);
+    return admin.messaging().sendToTopic(topic, payload, options).then(function(response) {
+		console.log("Successfully sent message:", response);
+	})
+	.catch(function(error) {
+		console.log("Error sending message:", error);
+	});
 });
