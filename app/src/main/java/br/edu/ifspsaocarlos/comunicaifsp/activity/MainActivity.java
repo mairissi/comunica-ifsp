@@ -145,10 +145,16 @@ public class MainActivity extends CommonActivity {
                     });
                 }
             });
-            mRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+            mLayoutManager.setReverseLayout(true);
+            mLayoutManager.setStackFromEnd(true);
+
+            mRecycler.setLayoutManager(mLayoutManager);
             dismissProgressDialog();
         }
     }
+
 
     public void configNavigationView(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
