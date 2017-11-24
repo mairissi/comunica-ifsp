@@ -75,8 +75,6 @@ public class ListUserTopicActivity extends CommonActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                Intent goToTopico = new Intent(ListUserTopicActivity.this, TopicMessageActivity.class);
-                startActivity(goToTopico);
                 finish();
         }
 
