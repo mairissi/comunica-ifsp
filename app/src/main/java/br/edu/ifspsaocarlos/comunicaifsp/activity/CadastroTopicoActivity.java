@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.comunicaifsp.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
@@ -149,6 +150,9 @@ public class CadastroTopicoActivity extends CommonActivity
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         showToast("Tópico cadastrado com sucesso!");
+        Intent intent = new Intent(CadastroTopicoActivity.this, TopicMessageActivity.class);
+        intent.putExtra("topic", topic);
+        startActivity(intent);
         finish();
     }
 
