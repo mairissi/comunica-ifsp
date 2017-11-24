@@ -241,7 +241,13 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
         dismissProgressDialog();
 
         rV.setAdapter(firebaseRecyclerAdapter);
-        rV.setLayoutManager(new LinearLayoutManager(this));
+
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.setReverseLayout(true);
+        mLayoutManager.setStackFromEnd(true);
+
+        rV.setLayoutManager(mLayoutManager);
+        //rV.setLayoutManager(new LinearLayoutManager(this));
 
         getSupportActionBar().setTitle("Tópicos");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
