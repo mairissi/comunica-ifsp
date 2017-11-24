@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -104,10 +105,10 @@ public class CadastroTopicoActivity extends CommonActivity
             showProgressDialog("Criando");
             topic.saveDB(CadastroTopicoActivity.this);
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            reference.child("usuario_topico").child(userId).child(topic.getIdTopic()).setValue(topic);
-            reference.child("topico_e_usuario").child(topic.getIdTopic()).child(userId).setValue(topic);
-            reference.child("usuario_topico_id").child(userId).child(topic.getIdTopic()).setValue(topic.getIdTopic());
+            FirebaseUser currentUserUser = FirebaseAuth.getInstance().getCurrentUser();
+            reference.child("usuario_topico").child(currentUserUser.getUid()).child(topic.getIdTopic()).setValue(topic);
+            reference.child("topico_e_usuario").child(topic.getIdTopic()).child(currentUserUser.getUid()).setValue(currentUserUser.getDisplayName());
+            reference.child("usuario_topico_id").child(currentUserUser.getUid()).child(topic.getIdTopic()).setValue(topic.getIdTopic());
         }
 
     }

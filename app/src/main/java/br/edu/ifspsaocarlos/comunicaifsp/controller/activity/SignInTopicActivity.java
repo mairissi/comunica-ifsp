@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -67,10 +68,10 @@ public class SignInTopicActivity extends CommonActivity
             progressDialog.show();
             if (topicPassword.getText().toString().equals(topic.getPassword())) {
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                reference.child("usuario_topico").child(userId).child(topic.getIdTopic()).setValue(topic);
-                reference.child("topico_e_usuario").child(topic.getIdTopic()).child(userId).setValue(topic);
-                reference.child("usuario_topico_id").child(userId).child(topic.getIdTopic()).setValue(topic.getIdTopic());
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                reference.child("usuario_topico").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic);
+                reference.child("topico_e_usuario").child(topic.getIdTopic()).child(currentUser.getUid()).setValue(currentUser.getDisplayName());
+                reference.child("usuario_topico_id").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic.getIdTopic());
 
                 FirebaseMessaging.getInstance().subscribeToTopic("/topics/" + topic.getIdTopic());
                 progressDialog.dismiss();
