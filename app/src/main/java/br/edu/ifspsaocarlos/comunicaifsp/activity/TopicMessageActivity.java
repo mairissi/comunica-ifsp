@@ -3,11 +3,9 @@ package br.edu.ifspsaocarlos.comunicaifsp.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,9 +18,11 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -115,11 +115,25 @@ public class TopicMessageActivity extends CommonActivity
             public void onClick(View v) {
                 showProgressDialog("Enviando");
                 initObject();
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("topicos_mensagem");
-                String key = ref.push().getKey();
-                ref.child(topic.getIdTopic()).child(key).setValue(message);
-                mMsgBox.setText("");
-                dismissProgressDialog();
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("topicos_mensagem").child(topic.getIdTopic());
+                DatabaseReference refTopic = FirebaseDatabase.getInstance().getReference("generalTopic").child(topic.getIdTopic());
+                final String key = ref.push().getKey();
+
+                refTopic.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Topic topic = dataSnapshot.getValue(Topic.class);
+                        message.setTitle(topic.getName());
+                        ref.child(key).setValue(message);
+                        mMsgBox.setText("");
+                        dismissProgressDialog();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
     }

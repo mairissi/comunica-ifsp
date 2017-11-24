@@ -18,7 +18,7 @@ exports.pushNotification = functions.database.ref('/topicos_mensagem/{idTopic}/{
   // Create a notification
     const payload = {
         notification: {
-            title:"TITULO",
+            title: valueObject.title,
             body: valueObject.message,
             sound: "default"
         },

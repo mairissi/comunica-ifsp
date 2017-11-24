@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class Message implements Serializable{
     String message;
     String date;
+    String title;
 
     public String getMessage() {
         return message;
@@ -25,4 +26,8 @@ public class Message implements Serializable{
     public void setDate(String date) {
         this.date = date;
     }
+
+    public String getTitle() { return title; }
+
+    public void setTitle(String title) { this.title = title; }
 }
