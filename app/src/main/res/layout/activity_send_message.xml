@@ -37,68 +37,61 @@
             android:text="Nenhuma mensagem encontrada !"
             android:layout_centerInParent="true"/>
 
-        <LinearLayout
-            android:id="@+id/message_sender_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
-            android:layout_alignParentBottom="true"
-            android:baselineAligned="false"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/shipper_field"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.8"
-                    android:layout_height="wrap_content"
-                    android:maxLines="4"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/edit_text_background"
-                    android:gravity="top"
-                    android:hint="Digite a mensagem aqui"
-                    android:inputType="textMultiLine"
-                    android:overScrollMode="always"
-                    android:padding="8dp"
-                    android:scrollbarStyle="insideInset"
-                    android:scrollbars="vertical" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_send_message"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_gravity="center"
-                    android:scaleType="center"
-                    android:layout_weight="0.1"
-                    android:src="@drawable/ic_action_go"/>
-            </LinearLayout>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="24dp"
             android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
             android:orientation="horizontal">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@id/message_sender_container"
-                />
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 
+
+        <LinearLayout
+            android:id="@+id/message_sender_container"
+            android:layout_width="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/shipper_field"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:layout_weight="0.8"
+                android:background="@drawable/edit_text_background"
+                android:hint="Digite a mensagem aqui"
+                android:inputType="textMultiLine"
+                android:maxLines="4"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_send_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.1"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_go" />
+        </LinearLayout>
     </RelativeLayout>
+
+
+
+
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"
