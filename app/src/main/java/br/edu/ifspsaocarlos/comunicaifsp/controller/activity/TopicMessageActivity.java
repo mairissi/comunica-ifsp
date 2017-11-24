@@ -220,4 +220,9 @@ public class TopicMessageActivity extends CommonActivity
             txt_date = (TextView) itemView.findViewById(R.id.client_date);
         }
     }
+
+    public void callShowUsers(View view) {
+        Intent intent = new Intent(this, ListUserTopicActivity.class);
+        startActivity(intent);
+    }
 }

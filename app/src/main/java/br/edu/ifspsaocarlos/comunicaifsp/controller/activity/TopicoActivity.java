@@ -69,10 +69,7 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
 
         createProgressDialog();
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
+        showProgressDialog("Carregando");
         //Se vier pelo click da push notification, vai ter extra
         if (getIntent().getExtras() != null){
             String topicId = (String) getIntent().getExtras().get("topicId");
@@ -85,17 +82,17 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                     intent.putExtra("topic", topic);
                     startActivity(intent);
                     finish();
-                    progressDialog.cancel();
+                    dismissProgressDialog();
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    progressDialog.cancel();
+                    dismissProgressDialog();
 
                 }
             });
         } else {
-            progressDialog.cancel();
+            dismissProgressDialog();
 
             initViews();
 
