@@ -36,9 +36,9 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 import br.edu.ifspsaocarlos.comunicaifsp.R;
+import br.edu.ifspsaocarlos.comunicaifsp.model.callback.TopicPresenter;
 import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
 import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
-import br.edu.ifspsaocarlos.comunicaifsp.model.callback.TopicPresenter;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -69,6 +69,10 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
 
         createProgressDialog();
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
         //Se vier pelo click da push notification, vai ter extra
         if (getIntent().getExtras() != null){
             String topicId = (String) getIntent().getExtras().get("topicId");
@@ -81,14 +85,17 @@ public class TopicoActivity extends CommonActivity implements TopicPresenter {
                     intent.putExtra("topic", topic);
                     startActivity(intent);
                     finish();
+                    progressDialog.cancel();
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    progressDialog.cancel();
 
                 }
             });
         } else {
+            progressDialog.cancel();
 
             initViews();
 
