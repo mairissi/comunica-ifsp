@@ -49,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/descricao"
                         android:imeOptions="actionNext"
-                        android:inputType="textPersonName|textCapWords" />
+                        android:inputType="textCapSentences" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
