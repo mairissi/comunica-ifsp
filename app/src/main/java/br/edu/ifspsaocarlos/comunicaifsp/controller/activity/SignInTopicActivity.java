@@ -76,6 +76,7 @@ public class SignInTopicActivity extends CommonActivity
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User value = dataSnapshot.getValue(User.class);
+                        value.setIdUser(currentUser.getUid());
                         FirebaseDatabase.getInstance().getReference().child("topico_e_usuario").child(topic.getIdTopic()).child(currentUser.getUid()).setValue(value);
                     }
 
