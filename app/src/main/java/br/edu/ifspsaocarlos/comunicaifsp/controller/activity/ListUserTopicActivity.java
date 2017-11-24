@@ -6,15 +6,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import br.edu.ifspsaocarlos.comunicaifsp.R;
+import br.edu.ifspsaocarlos.comunicaifsp.controller.adapter.UserTopicAdapter;
 import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
 
 /**
@@ -28,13 +27,19 @@ public class ListUserTopicActivity extends CommonActivity{
     private TextView mDefaultMsg;
 
     private RecyclerView mRecycler;
+    String topicid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_list_user_topic);
 
         initViews();
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            topicid = extras.getString("TOPICID");
+        }
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -43,18 +48,12 @@ public class ListUserTopicActivity extends CommonActivity{
         getSupportActionBar().setTitle("Usuários");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mRecycler = (RecyclerView) findViewById(R.id.recycler_view_users);
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        mRecycler.setAdapter(new FirebaseRecyclerAdapter<User, ListUserTopicActivity.MyViewHolder>(User.class, R.layout.cell_user_topic,
-                ListUserTopicActivity.MyViewHolder.class, databaseReference.child("topico_e_usuario")) {
-            @Override
-            protected void populateViewHolder(MyViewHolder viewHolder, User model, int position) {
-                mDefaultMsg.setVisibility(View.GONE);
-                viewHolder.txt_user.setText(model.getName());
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-            }
-        });
+        mRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mRecycler.setAdapter(new UserTopicAdapter(User.class, R.layout.cell_user_topic,
+                UserTopicAdapter.MyViewHolder.class, databaseReference.child("topico_e_usuario/" + topicid), progressDialog, mDefaultMsg));
 
         final LinearLayoutManager manager = new LinearLayoutManager(this);
         mRecycler.setLayoutManager(manager);
@@ -101,12 +100,5 @@ public class ListUserTopicActivity extends CommonActivity{
 
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView txt_user;
 
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            txt_user = (TextView) itemView.findViewById(R.id.user_name);
-        }
-    }
 }

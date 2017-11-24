@@ -223,6 +223,7 @@ public class TopicMessageActivity extends CommonActivity
 
     public void callShowUsers(View view) {
         Intent intent = new Intent(this, ListUserTopicActivity.class);
+        intent.putExtra("TOPICID", topic.getIdTopic());
         startActivity(intent);
     }
 }

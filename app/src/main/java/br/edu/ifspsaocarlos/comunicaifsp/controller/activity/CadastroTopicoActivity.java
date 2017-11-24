@@ -12,12 +12,15 @@ import android.widget.Button;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
 
 /**
  * Created by MRissi on 15-Sep-17.
@@ -104,11 +107,23 @@ public class CadastroTopicoActivity extends CommonActivity
             topic.setIdTopic(FirebaseAuth.getInstance().getCurrentUser().getUid());
             showProgressDialog("Criando");
             topic.saveDB(CadastroTopicoActivity.this);
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            FirebaseUser currentUserUser = FirebaseAuth.getInstance().getCurrentUser();
-            reference.child("usuario_topico").child(currentUserUser.getUid()).child(topic.getIdTopic()).setValue(topic);
-            reference.child("topico_e_usuario").child(topic.getIdTopic()).child(currentUserUser.getUid()).setValue(currentUserUser.getDisplayName());
-            reference.child("usuario_topico_id").child(currentUserUser.getUid()).child(topic.getIdTopic()).setValue(topic.getIdTopic());
+
+
+            final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            FirebaseDatabase.getInstance().getReference().child("usuario_topico").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic);
+            FirebaseDatabase.getInstance().getReference().child("users/"+currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User value = dataSnapshot.getValue(User.class);
+                    FirebaseDatabase.getInstance().getReference().child("topico_e_usuario").child(topic.getIdTopic()).child(currentUser.getUid()).setValue(value);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            FirebaseDatabase.getInstance().getReference().child("usuario_topico_id").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic.getIdTopic());
         }
 
     }

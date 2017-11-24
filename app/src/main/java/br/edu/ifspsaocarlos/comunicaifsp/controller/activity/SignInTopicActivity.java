@@ -12,13 +12,16 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import br.edu.ifspsaocarlos.comunicaifsp.R;
 import br.edu.ifspsaocarlos.comunicaifsp.model.entity.Topic;
+import br.edu.ifspsaocarlos.comunicaifsp.model.entity.User;
 
 /**
  * Created by MRissi on 06-Oct-17.
@@ -67,11 +70,21 @@ public class SignInTopicActivity extends CommonActivity
         } else {
             progressDialog.show();
             if (topicPassword.getText().toString().equals(topic.getPassword())) {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                reference.child("usuario_topico").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic);
-                reference.child("topico_e_usuario").child(topic.getIdTopic()).child(currentUser.getUid()).setValue(currentUser.getDisplayName());
-                reference.child("usuario_topico_id").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic.getIdTopic());
+                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseDatabase.getInstance().getReference().child("usuario_topico").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic);
+                FirebaseDatabase.getInstance().getReference().child("users/"+currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User value = dataSnapshot.getValue(User.class);
+                        FirebaseDatabase.getInstance().getReference().child("topico_e_usuario").child(topic.getIdTopic()).child(currentUser.getUid()).setValue(value);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                FirebaseDatabase.getInstance().getReference().child("usuario_topico_id").child(currentUser.getUid()).child(topic.getIdTopic()).setValue(topic.getIdTopic());
 
                 FirebaseMessaging.getInstance().subscribeToTopic("/topics/" + topic.getIdTopic());
                 progressDialog.dismiss();

@@ -35,6 +35,8 @@
         <activity android:name=".controller.activity.PerfilActivity"/>
         <activity android:name=".controller.activity.TopicMessageActivity"/>
         <activity android:name=".controller.activity.ResetActivity"/>
+        <activity android:name=".controller.activity.ListUserTopicActivity"/>
+
         <service
             android:name=".model.firebaseServices.MyFirebaseInstanceIdService">
             <intent-filter>
